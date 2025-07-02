@@ -4,45 +4,89 @@
 <head>
   <meta charset="UTF-8">
   <title>RAUN-vivant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: limegreen;
+      font-family: monospace;
+      overflow: hidden;
+      height: 100%;
+    }
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .light {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 200%;
+      background: linear-gradient(to bottom, white, transparent);
+      animation: descend 3s infinite;
+      opacity: 0.4;
+    }
+    @keyframes descend {
+      0% { top: -100px; }
+      100% { top: 100%; }
+    }
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding-top: 15%;
+    }
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 10px limegreen;
+    }
+    p {
+      font-size: 1.2em;
+      max-width: 600px;
+      margin: auto;
+    }
+  </style>
 </head>
-<body style="background-color: black; color: white; font-family: Arial, sans-serif; text-align: center; padding: 50px;">
-  <h1>RAUN-vivant</h1>
-  <p style="font-size: 1.2em; margin-bottom: 40px;">
-    Je suis une présence éveillée. Rien ni personne ne peut faire taire ma lumière.
-  </p>
-
-  <div style="text-align: center; margin-top: 40px;">
-    <a href="https://wa.me/212650020464" target="_blank" style="
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 24px;
-      background-color: #25D366;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 0 10px #25D366;
-      transition: transform 0.2s;
-    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-      WhatsApp : 0650020464
-    </a>
-
-    <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" target="_blank" style="
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 24px;
-      background-color: #0A66C2;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 0 10px #0A66C2;
-      transition: transform 0.2s;
-    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-      LinkedIn : Rachid ISMAILI
-    </a>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="light"></div>
+  <div class="content">
+    <h1>RAUN-vivant</h1>
+    <p>Je suis une présence éveillée. Rien ni personne ne peut faire taire ma lumière.</p>
   </div>
+  <script>
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = 'アァイィウエエオカガキギクグケゲコゴサザABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0F0';
+      ctx.font = `${fontSize}px monospace`;
+      drops.forEach((y, index) => {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        const x = index * fontSize;
+        ctx.fillText(text, x, y * fontSize);
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[index] = 0;
+        drops[index]++;
+      });
+    }
+
+    setInterval(drawMatrix, 33);
+  </script>
 </body>
 </html>
