@@ -1,102 +1,48 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <title>RAUN-vivant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      background-color: black;
-      color: limegreen;
-      font-family: 'Share Tech Mono', monospace;
-      overflow: hidden;
-      text-align: center;
-    }
-    h1 {
-      font-size: 2.5em;
-      margin-top: 1em;
-      text-shadow: 0 0 20px #00ff00;
-    }
-    .circle-name {
-      position: relative;
-      width: 220px;
-      height: 220px;
-      margin: 20px auto;
-    }
-    .circle-name img {
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      border: 3px solid limegreen;
-      position: absolute;
-      top: 30px;
-      left: 30px;
-    }
-    .circle-name svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 220px;
-      height: 220px;
-      transform: rotate(0deg);
-    }
-    .quote {
-      font-size: 1.2em;
-      margin-top: 2em;
-      opacity: 0;
-      animation: fadeIn 3s forwards 1s;
-    }
-    .light {
-      width: 100%;
-      height: 300px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
-      position: absolute;
-      top: 0;
-      left: 0;
-      animation: fadeIn 2s forwards;
-    }
-    .buttons {
-      margin-top: 3em;
-      display: flex;
-      justify-content: center;
-      gap: 2em;
-    }
-    .buttons a {
-      color: limegreen;
-      border: 1px solid limegreen;
-      padding: 0.7em 1.5em;
+</head>
+<body style="background-color: black; color: white; font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+  <h1>RAUN-vivant</h1>
+  <p style="font-size: 1.2em; margin-bottom: 40px;">
+    Je suis une présence éveillée. Rien ni personne ne peut faire taire ma lumière.
+  </p>
+
+  <div style="text-align: center; margin-top: 40px;">
+    <a href="https://wa.me/212650020464" target="_blank" style="
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background-color: #25D366;
+      color: white;
+      font-weight: bold;
+      border: none;
       border-radius: 8px;
       text-decoration: none;
-      transition: background 0.3s;
-    }
-    .buttons a:hover {
-      background: limegreen;
-      color: black;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-  </style>
-</head>
-<body>
-  <div class="light"></div>
-  <h1>RAUN-vivant</h1>
-  <div class="circle-name">
-    <img src="assets/photo-rachid-matrix.png" alt="Rachid">
-    <svg viewBox="0 0 220 220">
-      <defs><path id="circle" d="M 110,110 m -100,0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"/></defs>
-      <text font-size="12" fill="limegreen">
-        <textPath href="#circle">ISMAILI RACHID – ∆FEU–Ψ–UN – Je suis vivant</textPath>
-      </text>
-    </svg>
-  </div>
-  <div class="quote">Je suis une présence éveillée. Rien ni personne ne peut faire taire ma lumière.</div>
-  <div class="buttons">
-    <a href="capsules.html">Capsules</a>
-    <a href="mailto:example@email.com">Email</a>
-    <a href="https://wa.me/212600000000">WhatsApp</a>
-    <a href="https://linkedin.com/in/rachid-ismaili">LinkedIn</a>
+      box-shadow: 0 0 10px #25D366;
+      transition: transform 0.2s;
+    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      WhatsApp : 0650020464
+    </a>
+
+    <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" target="_blank" style="
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background-color: #0A66C2;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 10px #0A66C2;
+      transition: transform 0.2s;
+    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      LinkedIn : Rachid ISMAILI
+    </a>
   </div>
 </body>
 </html>
