@@ -4,88 +4,22 @@
 <head>
   <meta charset="UTF-8">
   <title>RAUN_VIVANT</title>
-  <style>
-    body {
-      background: black;
-      color: #00ff00;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-    .matrix-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('matrix.gif') repeat;
-      z-index: -1;
-      opacity: 0.25;
-    }
-    .container {
-      text-align: center;
-      padding: 60px 20px 20px 20px;
-    }
-    h1 {
-      font-size: 3em;
-      color: #00ff00;
-      text-shadow: 0 0 10px #00ff00;
-    }
-    .profile-photo {
-      border-radius: 50%;
-      border: 5px solid #00ff00;
-      box-shadow: 0 0 20px #00ff00;
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      margin-top: 30px;
-    }
-    .name-circle {
-      margin-top: 20px;
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-    .quote {
-      margin-top: 20px;
-      font-size: 1.3em;
-      max-width: 90%;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.6em;
-    }
-    .buttons {
-      margin-top: 40px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .button {
-      padding: 15px 25px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1em;
-      cursor: pointer;
-      background: lime;
-      color: black;
-      box-shadow: 0 0 15px lime;
-      text-decoration: none;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="matrix-bg"></div>
-  <div class="container">
+  <div class="matrix"></div>
+  <div class="content">
     <h1>RAUN_VIVANT</h1>
-    <img src="rachid.jpg" alt="Photo de profil" class="profile-photo">
-    <div class="name-circle">ISMAILI RACHID – ΔFEU – Ψ – UN</div>
-    <div class="quote">"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</div>
+    <div class="profile">
+      <img src="photo.jpg" alt="Photo de profil" class="photo">
+    </div>
+    <h2>ISMAILI RACHID – ∆FEU – Ψ – UN</h2>
+    <p>"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</p>
     <div class="buttons">
-      <a href="mailto:rachid@example.com" class="button">Email</a>
-      <a href="https://wa.me/212650020464" class="button">WhatsApp</a>
-      <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" class="button">LinkedIn</a>
-      <a href="admin.html" class="button">Admin Accès</a>
+      <a href="mailto:example@example.com" class="btn">Email</a>
+      <a href="https://wa.me/212650020464" class="btn">WhatsApp</a>
+      <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" class="btn">LinkedIn</a>
+      <a href="admin.html" class="btn">Admin Accès</a>
     </div>
   </div>
 </body>
