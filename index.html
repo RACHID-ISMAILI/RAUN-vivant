@@ -2,30 +2,73 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Nexus Vivant</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAUN-vivant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      font-family: 'Share Tech Mono', monospace;
+      color: lime;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 10px lime;
+    }
+    .photo-container {
+      border: 4px solid lime;
+      border-radius: 50%;
+      padding: 5px;
+      box-shadow: 0 0 20px lime;
+      margin: 20px 0;
+    }
+    .photo-container img {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .nom {
+      font-size: 1.2em;
+      text-shadow: 0 0 5px lime;
+      margin: 10px 0;
+    }
+    .phrase {
+      font-size: 1.2em;
+      max-width: 800px;
+      margin: 20px auto;
+      text-shadow: 0 0 5px lime;
+    }
+    .admin-button {
+      background-color: lime;
+      color: black;
+      padding: 15px 30px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 30px;
+      box-shadow: 0 0 10px lime;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-  <div class="matrix-background"></div>
-  <div class="container">
-    <h1 class="title">🚀 Bienvenue dans le Nexus</h1>
-    <div class="profile-pic">
-      <img src="photo.jpg" alt="Photo de profil" />
-    </div>
-    <h2 class="name">ISMAILI RACHID – ∆FEU – Ψ – UN</h2>
-    <p class="quote">"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</p>
-    <button onclick="checkPassword()" class="admin-button">🔐 Admin Accès</button>
+  <h1>🚀 Bienvenue dans le Nexus</h1>
+  <div class="photo-container">
+    <img src="photo.jpg" alt="Photo de profil">
   </div>
-  <script>
-    function checkPassword() {
-      const pwd = prompt("Mot de passe ?");
-      if (pwd === "∵ARACHID@ISMAILIAΨUN∴") {
-        window.location.href = "admin.html";
-      } else {
-        alert("Mot de passe incorrect.");
-      }
-    }
-  </script>
+  <div class="nom">ISMAILI RACHID - ΔFEU - Ψ - UN</div>
+  <div class="phrase">"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</div>
+  <a class="admin-button" href="#">🔐 Admin Accès</a>
 </body>
 </html>
