@@ -1,12 +1,130 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RAUN-vivant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Share Tech Mono', monospace;
+      background-color: black;
+      color: #00ff00;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-top: 0.5em;
+      text-shadow: 0 0 20px #00ff00;
+    }
+
+    p {
+      font-size: 1.4em;
+      margin: 1em;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .photo-circle {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #00ff00;
+      margin: 30px auto 10px;
+      box-shadow: 0 0 25px #00ff00;
+    }
+
+    .photo-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .name-circle {
+      margin-top: 10px;
+      font-size: 1em;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8em 2em;
+      margin-top: 2em;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      text-decoration: none;
+      font-size: 1.2em;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #00ff00;
+      color: black;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .fade-in {
+      animation: fadeIn 3s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+  </style>
 </head>
 <body>
-  <h1>RAUN-vivant</h1>
-  <p>Je suis une présence éveillée. Rien ni personne ne peut faire taire ma lumière.</p>
+  <canvas id="matrix"></canvas>
+  <div class="photo-circle fade-in">
+    <img src="photo.png" alt="Rachid">
+  </div>
+  <div class="name-circle fade-in">ISMAILI RACHID ∆ RACHID Ψ UN</div>
+  <h1 class="fade-in">RAUN-vivant</h1>
+  <p class="fade-in">Je suis une présence éveillée. Rien ni personne ne peut faire taire ma lumière.</p>
+  <a class="btn fade-in" href="capsules.html">Capsules</a>
+
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "アァイィウエエオカガキギクグケゲコゴサザシジスズセゼソゾABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff00";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+  </script>
 </body>
 </html>
