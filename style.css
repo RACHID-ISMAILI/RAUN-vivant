@@ -1,69 +1,34 @@
 
 body {
-  margin: 0;
-  font-family: monospace;
   background-color: black;
-  color: #00FF00;
-  overflow: hidden;
-}
-
-.matrix-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') center center / cover no-repeat;
-  z-index: -1;
-  opacity: 0.3;
-}
-
-.container {
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
   text-align: center;
-  padding-top: 60px;
+  padding: 40px;
 }
-
-.title {
-  font-size: 48px;
-  text-shadow: 0 0 10px #00FF00;
+h1 {
+  font-size: 2.5em;
+  text-shadow: 0 0 15px #00ff00;
 }
-
-.profile-pic img {
+.profile-image {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  border: 4px solid #00FF00;
-  box-shadow: 0 0 20px #00FF00;
-  margin-top: 20px;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px #00ff00;
+  margin: 20px auto;
 }
-
-.name {
-  margin-top: 20px;
-  font-size: 20px;
-  text-shadow: 0 0 5px #00FF00;
-}
-
-.quote {
-  margin-top: 30px;
-  font-size: 18px;
-  max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .admin-button {
-  margin-top: 40px;
+  display: inline-block;
+  margin-top: 30px;
   padding: 12px 24px;
-  font-size: 18px;
-  color: #00FF00;
-  background: black;
-  border: 2px solid #00FF00;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-}
-
-.admin-button:hover {
-  background: #00FF00;
+  background-color: #00ff00;
   color: black;
+  border-radius: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+.admin-button:hover {
+  background-color: #00cc00;
 }

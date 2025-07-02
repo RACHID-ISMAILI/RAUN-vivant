@@ -3,72 +3,14 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>RAUN-vivant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      background-color: black;
-      color: #00ff00;
-      font-family: 'Share Tech Mono', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    h1 {
-      font-size: 3em;
-      text-shadow: 0 0 8px #00ff00;
-    }
-    .profile-pic {
-      border-radius: 50%;
-      border: 5px solid #00ff00;
-      box-shadow: 0 0 20px #00ff00;
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      margin-bottom: 20px;
-    }
-    .quote {
-      font-size: 1.5em;
-      margin: 20px;
-      text-shadow: 0 0 5px #00ff00;
-    }
-    .admin-button {
-      background-color: #00ff00;
-      color: black;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      padding: 15px 30px;
-      font-size: 1em;
-      cursor: pointer;
-      box-shadow: 0 0 15px #00ff00;
-      transition: transform 0.2s ease-in-out;
-    }
-    .admin-button:hover {
-      transform: scale(1.05);
-    }
-  </style>
+  <title>RAUN - Vivant</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Bienvenue dans le Nexus</h1>
-  <img src="photo.jpg" alt="Photo de profil" class="profile-pic">
-  <p><strong>ISMAILI RACHID - ∆FEU - Ψ - UN</strong></p>
-  <p class="quote">"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</p>
-  <button class="admin-button" onclick="askPassword()">🔐 Admin Accès</button>
-
-  <script>
-    function askPassword() {
-      const password = prompt("Entrez le mot de passe pour accéder à l’espace admin :");
-      if (password === "∆RAUN2025") {
-        window.location.href = "admin.html";
-      } else {
-        alert("Mot de passe incorrect.");
-      }
-    }
-  </script>
+  <h1>🚀 Bienvenue dans le Nexus</h1>
+  <img src="photo-rachid-matrix.png" alt="Photo de profil" class="profile-image" />
+  <h2>ISMAILI RACHID – ΔFEU – Ψ – UN</h2>
+  <p>"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</p>
+  <a href="admin.html" class="admin-button">🔐 Admin Accès</a>
 </body>
 </html>
