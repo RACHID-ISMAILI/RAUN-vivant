@@ -1,56 +1,36 @@
 
 body {
-  margin: 0;
-  font-family: monospace;
   background-color: black;
-  color: lime;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  padding: 2em;
 }
-
-.matrix-background {
-  padding: 20px;
+h1 span {
+  text-shadow: 0 0 10px #0f0;
 }
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 2em;
-  font-weight: bold;
-  text-shadow: 0 0 10px lime;
-}
-
-.icon {
-  height: 40px;
-}
-
-input#search {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  font-size: 1em;
+input, button {
+  padding: 0.5em;
+  margin: 1em;
   background-color: black;
-  color: lime;
-  border: 1px solid lime;
-  box-shadow: 0 0 8px lime;
+  color: #0f0;
+  border: 1px solid #0f0;
+  border-radius: 5px;
 }
-
-button#reload {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: black;
-  color: lime;
-  border: 1px solid lime;
-  font-size: 1em;
-  cursor: pointer;
-  box-shadow: 0 0 8px lime;
+#capsules-container {
+  margin-top: 2em;
 }
-
 .capsule {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: rgba(0, 255, 0, 0.1);
-  border: 1px solid lime;
-  box-shadow: 0 0 5px lime;
-  font-size: 1.2em;
+  background: rgba(0,255,0,0.05);
+  border: 1px solid #0f0;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: left;
 }
-    
+.share-buttons a {
+  margin: 0 5px;
+  text-decoration: none;
+  color: #00ff00;
+  font-size: 1.5em;
+}

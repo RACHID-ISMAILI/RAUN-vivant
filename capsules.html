@@ -2,21 +2,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Capsules Spirituelles</title>
   <link rel="stylesheet" href="matrix-style.css">
 </head>
 <body>
-  <div class="matrix-background">
-    <div class="header">
-      <img src="https://em-content.zobj.net/source/microsoft-teams/363/satellite-antenna_1f4e1.png" alt="antenna" class="icon" />
-      <h1>Capsules Spirituelles</h1>
-    </div>
-    <input type="text" id="search" placeholder="🔍 Rechercher une capsule...">
-    <button id="reload" onclick="loadCapsules()">🔄 Recharger</button>
-    <div id="capsules-container"></div>
-  </div>
+  <h1>📡 <span>Capsules Spirituelles</span></h1>
+  <input type="text" id="search" placeholder="🔍 Rechercher une capsule..." />
+  <button onclick="fetchCapsules()">🔄 Recharger</button>
+  <div id="capsules-container"></div>
   <script type="module" src="capsules.js"></script>
 </body>
 </html>
-    

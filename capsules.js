@@ -1,41 +1,38 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-  authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network",
-  storageBucket: "raun-network.appspot.com",
-  messagingSenderId: "541416001018",
-  appId: "1:541416001018:web:c1d8518ec9181631206843",
-  measurementId: "G-90SBGYPPZD"
-};
+import { firebaseConfig } from './firebase.js';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const container = document.getElementById("capsules-container");
+const searchInput = document.getElementById("search");
 
-async function fetchCapsules() {
-  const querySnapshot = await getDocs(collection(db, "capsules"));
-  return querySnapshot.docs.map(doc => doc.data());
-}
-
-async function loadCapsules() {
-  const container = document.getElementById("capsules-container");
-  const searchTerm = document.getElementById("search").value.toLowerCase();
+window.fetchCapsules = async () => {
   container.innerHTML = "";
-  const capsules = await fetchCapsules();
-  capsules
-    .filter(c => c.texte && c.texte.toLowerCase().includes(searchTerm))
-    .forEach(c => {
-      const div = document.createElement("div");
-      div.className = "capsule";
-      div.textContent = c.texte;
-      container.appendChild(div);
-    });
-}
+  const snapshot = await getDocs(collection(db, "capsules"));
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (!data.texte) return;
+    const div = document.createElement("div");
+    div.className = "capsule";
+    div.innerHTML = `
+      <p>${data.texte}</p>
+      <div class="share-buttons">
+        <a href="https://wa.me/?text=${encodeURIComponent(data.texte)}" target="_blank">📱</a>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://raun.com&title=Capsule&summary=${encodeURIComponent(data.texte)}" target="_blank">💼</a>
+        <a href="mailto:?subject=Capsule RAUN&body=${encodeURIComponent(data.texte)}">✉️</a>
+      </div>`;
+    container.appendChild(div);
+  });
+};
 
-window.loadCapsules = loadCapsules;
-document.addEventListener("DOMContentLoaded", loadCapsules);
-document.getElementById("search").addEventListener("input", loadCapsules);
-    
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.toLowerCase();
+  Array.from(container.children).forEach(capsule => {
+    const match = capsule.textContent.toLowerCase().includes(query);
+    capsule.style.display = match ? "block" : "none";
+  });
+});
+
+fetchCapsules();
