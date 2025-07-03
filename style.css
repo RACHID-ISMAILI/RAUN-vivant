@@ -1,1 +1,53 @@
-/* CSS Matrix */
+
+body {
+  margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+  background: black;
+  color: #00ff00;
+  text-align: center;
+}
+
+.matrix-background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  z-index: -1;
+  overflow: hidden;
+}
+
+h1, h2 {
+  margin: 20px 0;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.profile-pic img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid #00ff00;
+  box-shadow: 0 0 20px #00ff00;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.btn {
+  background: #00ff00;
+  color: black;
+  padding: 10px 20px;
+  margin: 10px;
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+p {
+  font-size: 18px;
+  margin: 20px auto;
+  max-width: 600px;
+}
