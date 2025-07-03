@@ -15,18 +15,49 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const container = document.getElementById("capsules-container");
-container.innerHTML = "";
+const searchInput = document.getElementById("searchInput");
 
-const q = query(collection(db, "capsules"), orderBy("date", "desc"));
-const snapshot = await getDocs(q);
+async function afficherCapsules() {
+  container.innerHTML = "";
+  const q = query(collection(db, "capsules"), orderBy("date", "desc"));
+  const snapshot = await getDocs(q);
+  const capsules = [];
 
-snapshot.forEach(doc => {
-  const data = doc.data();
-  const div = document.createElement("div");
-  div.className = "capsule";
-  div.innerHTML = `
-    <div class="texte">${data.texte}</div>
-    <div class="date">${data.date?.toDate().toLocaleString() || ''}</div>
-  `;
-  container.appendChild(div);
-});
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    capsules.push({
+      texte: data.texte,
+      date: data.date?.toDate()
+    });
+  });
+
+  function render(filteredCapsules) {
+    container.innerHTML = "";
+    filteredCapsules.forEach(capsule => {
+      const div = document.createElement("div");
+      div.className = "capsule";
+      const encodedText = encodeURIComponent(capsule.texte);
+      div.innerHTML = `
+        <div class="texte">${capsule.texte}</div>
+        <div class="date">${capsule.date?.toLocaleString() || ''}</div>
+        <div class="share">
+          <a href="https://wa.me/?text=${encodedText}" target="_blank">📲 WhatsApp</a>
+          <a href="mailto:?body=${encodedText}" target="_blank">✉️ Email</a>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  searchInput.addEventListener("input", () => {
+    const term = searchInput.value.toLowerCase();
+    const filtered = capsules.filter(c =>
+      c.texte.toLowerCase().includes(term)
+    );
+    render(filtered);
+  });
+
+  render(capsules);
+}
+
+afficherCapsules();
