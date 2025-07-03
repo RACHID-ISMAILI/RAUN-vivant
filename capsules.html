@@ -2,39 +2,19 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Capsules RAUN</title>
-  <link rel="stylesheet" href="css/matrix.css">
+  <meta charset="UTF-8" />
+  <title>Capsules RAUN - Publique</title>
   <style>
-    body {
-      background-color: black;
-      color: #00ff00;
-      font-family: "Courier New", Courier, monospace;
-      padding: 20px;
-    }
-    .capsule-container {
-      max-width: 800px;
-      margin: auto;
-    }
-    .capsule {
-      background: rgba(0, 0, 0, 0.6);
-      border-left: 4px solid #00ff00;
-      padding: 15px;
-      margin-bottom: 20px;
-      animation: fadeIn 2s ease forwards;
-      opacity: 0;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
+    body { background: black; color: #00ff00; font-family: monospace; padding: 20px; }
+    .capsule { border: 1px solid #00ff00; padding: 10px; margin-bottom: 10px; border-radius: 10px; }
   </style>
 </head>
 <body>
-  <div class="capsule-container">
-    <h1>🌌 Capsules de Conscience</h1>
-    <div id="capsules"></div>
-    <p><a href="index.html" style="color:#00ff00;">← Retour à la page publique</a></p>
-  </div>
-  <script src="capsules.js"></script>
+  <h1>Capsules spirituelles RAUN</h1>
+  <div id="capsulesContainer">Chargement des capsules...</div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="capsules-public.js"></script>
 </body>
 </html>
