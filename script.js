@@ -1,1 +1,1 @@
-// JS générique
+console.log('RAUN-vivant ready');

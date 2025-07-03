@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>RAUN_VIVANT</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAUN Vivant</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="matrix-background"></div>
+  <canvas id="matrixCanvas"></canvas>
   <div class="container">
     <h1>RAUN_VIVANT</h1>
     <div class="profile-pic">
@@ -21,13 +20,8 @@
       <a href="https://wa.me/212650020464" class="btn">WhatsApp</a>
       <a href="https://linkedin.com/in/rachid-ismaili-68b61a27" class="btn">LinkedIn</a>
       <a href="admin.html" class="btn">Admin Accès</a>
-      <a href="capsules.html" class="btn" style="display:none;" id="capsule-btn">Capsules</a>
     </div>
   </div>
-  <script>
-    if(localStorage.getItem('auth') === 'true') {
-      document.getElementById('capsule-btn').style.display = 'inline-block';
-    }
-  </script>
+  <script src="matrix.js"></script>
 </body>
 </html>
