@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin RAUN</title>
+  <title>Accès Admin</title>
 </head>
 <body>
   <h1>🔐 Accès Admin</h1>
@@ -12,7 +11,6 @@
     <input type="password" name="password" placeholder="Mot de passe" required />
     <button type="submit">Se connecter</button>
   </form>
-
   <div id="protected" style="display:none;">
     <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
     <button onclick="logout()">Se déconnecter</button>
@@ -21,8 +19,9 @@
       <textarea id="capsuleText" placeholder="Écris ta capsule ici..." rows="6" cols="60"></textarea><br>
       <button onclick="saveCapsule()">Publier</button>
     </div>
+    <br>
+    <a href="index.html" class="btn">⬅ Retour page publique</a>
   </div>
-
   <script type="module" src="firebase.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module" src="firestore.js"></script>
