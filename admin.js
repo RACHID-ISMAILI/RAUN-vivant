@@ -11,12 +11,17 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 firebase.auth().onAuthStateChanged(function(user) {
+  console.log("Auth state changed, user:", user);
   if (user) {
     if (!window.location.href.includes("secret.html")) {
+      console.log("User connecté, redirection vers secret.html");
       window.location.href = "secret.html";
+    } else {
+      console.log("Déjà sur secret.html, pas de redirection");
     }
   } else {
     if (window.location.href.includes("secret.html")) {
+      console.log("User non connecté sur secret.html, redirection vers admin.html");
       window.location.href = "admin.html";
     }
   }
