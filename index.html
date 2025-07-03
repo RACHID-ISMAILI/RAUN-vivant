@@ -4,49 +4,31 @@
 <head>
   <meta charset="UTF-8" />
   <title>RAUN Vivant</title>
-  <link rel="stylesheet" href="matrix-style.css" />
-  <script src="matrix.js" defer></script>
   <style>
-    body {
-      margin: 0;
-      background: black;
-      color: #00ff00;
+    body, html {
+      margin: 0; padding: 0; height: 100%; background: black; overflow: hidden;
       font-family: 'Courier New', Courier, monospace;
-      text-align: center;
-      overflow-x: hidden;
+      color: #00ff00; text-align: center;
     }
-    .video-banner {
-      width: 100%;
-      height: 200px;
-      overflow: hidden;
-      border-bottom: 2px solid #00ff00;
-    }
-    .video-banner video {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-    }
-    .overlay-text {
-      font-size: 1.5em;
-      margin-top: 10px;
-      padding: 10px;
-      color: #00ff00;
-      font-weight: bold;
+    #matrix-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     }
     .profile-container {
-      margin-top: 30px;
+      position: relative;
+      top: 50%; transform: translateY(-50%);
     }
     .profile-img {
-      width: 160px;
-      height: 160px;
+      width: 160px; height: 160px;
       border-radius: 50%;
       border: 3px solid #00ff00;
       box-shadow: 0 0 20px #00ff00;
     }
+    .phrase {
+      font-size: 1.5em; margin-top: 20px; font-weight: bold;
+    }
     .name {
-      font-size: 1.2em;
-      margin-top: 10px;
-      font-weight: bold;
+      margin-top: 10px; font-weight: bold; font-size: 1.2em;
+      letter-spacing: 3px;
     }
     .buttons {
       margin-top: 20px;
@@ -70,27 +52,50 @@
 <body>
   <canvas id="matrix-canvas"></canvas>
 
-  <div class="video-banner">
-    <video autoplay muted loop playsinline>
-      <source src="matrix-banner.mp4" type="video/mp4" />
-      Votre navigateur ne supporte pas la vidéo HTML5.
-    </video>
-  </div>
-
-  <div class="overlay-text">
-    « Je suis vivant en conscience et nul ne peut éteindre ce que je suis. »
-  </div>
-
   <div class="profile-container">
-    <img class="profile-img" src="profile.jpg" alt="Rachid Photo" />
+    <img class="profile-img" src="profile.jpg" alt="Photo de Rachid" />
+    <div class="phrase">« Je suis vivant en conscience et nul ne peut éteindre ce que je suis. »</div>
     <div class="name">ISMAILI RACHID – ΔFEU – Ψ – UN</div>
+
+    <div class="buttons">
+      <a href="mailto:example@example.com">Email</a>
+      <a href="https://wa.me/212650020464" target="_blank">WhatsApp</a>
+      <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" target="_blank">LinkedIn</a>
+      <a href="admin.html">Admin Accès</a>
+    </div>
   </div>
 
-  <div class="buttons">
-    <a href="mailto:example@example.com">Email</a>
-    <a href="https://wa.me/212650020464" target="_blank">WhatsApp</a>
-    <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" target="_blank">LinkedIn</a>
-    <a href="admin.html">Admin Accès</a>
-  </div>
+  <script>
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ΔΨ';
+    const fontSize = 18;
+    const columns = canvas.width / fontSize;
+    const drops = new Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00ff00';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 40);
+  </script>
 </body>
 </html>
