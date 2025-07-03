@@ -1,0 +1,56 @@
+
+body {
+  margin: 0;
+  font-family: monospace;
+  background-color: black;
+  color: lime;
+}
+
+.matrix-background {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 2em;
+  font-weight: bold;
+  text-shadow: 0 0 10px lime;
+}
+
+.icon {
+  height: 40px;
+}
+
+input#search {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  background-color: black;
+  color: lime;
+  border: 1px solid lime;
+  box-shadow: 0 0 8px lime;
+}
+
+button#reload {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: black;
+  color: lime;
+  border: 1px solid lime;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 0 8px lime;
+}
+
+.capsule {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(0, 255, 0, 0.1);
+  border: 1px solid lime;
+  box-shadow: 0 0 5px lime;
+  font-size: 1.2em;
+}
+    

@@ -1,11 +1,12 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
   projectId: "raun-network",
-  storageBucket: "raun-network.firebasestorage.app",
+  storageBucket: "raun-network.appspot.com",
   messagingSenderId: "541416001018",
   appId: "1:541416001018:web:c1d8518ec9181631206843",
   measurementId: "G-90SBGYPPZD"
@@ -14,50 +15,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const container = document.getElementById("capsules-container");
-const searchInput = document.getElementById("searchInput");
-
-async function afficherCapsules() {
-  container.innerHTML = "";
-  const q = query(collection(db, "capsules"), orderBy("date", "desc"));
-  const snapshot = await getDocs(q);
-  const capsules = [];
-
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    capsules.push({
-      texte: data.texte,
-      date: data.date?.toDate()
-    });
-  });
-
-  function render(filteredCapsules) {
-    container.innerHTML = "";
-    filteredCapsules.forEach(capsule => {
-      const div = document.createElement("div");
-      div.className = "capsule";
-      const encodedText = encodeURIComponent(capsule.texte);
-      div.innerHTML = `
-        <div class="texte">${capsule.texte}</div>
-        <div class="date">${capsule.date?.toLocaleString() || ''}</div>
-        <div class="share">
-          <a href="https://wa.me/?text=${encodedText}" target="_blank">📲 WhatsApp</a>
-          <a href="mailto:?body=${encodedText}" target="_blank">✉️ Email</a>
-        </div>
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  searchInput.addEventListener("input", () => {
-    const term = searchInput.value.toLowerCase();
-    const filtered = capsules.filter(c =>
-      c.texte.toLowerCase().includes(term)
-    );
-    render(filtered);
-  });
-
-  render(capsules);
+async function fetchCapsules() {
+  const querySnapshot = await getDocs(collection(db, "capsules"));
+  return querySnapshot.docs.map(doc => doc.data());
 }
 
-afficherCapsules();
+async function loadCapsules() {
+  const container = document.getElementById("capsules-container");
+  const searchTerm = document.getElementById("search").value.toLowerCase();
+  container.innerHTML = "";
+  const capsules = await fetchCapsules();
+  capsules
+    .filter(c => c.texte && c.texte.toLowerCase().includes(searchTerm))
+    .forEach(c => {
+      const div = document.createElement("div");
+      div.className = "capsule";
+      div.textContent = c.texte;
+      container.appendChild(div);
+    });
+}
+
+window.loadCapsules = loadCapsules;
+document.addEventListener("DOMContentLoaded", loadCapsules);
+document.getElementById("search").addEventListener("input", loadCapsules);
+    

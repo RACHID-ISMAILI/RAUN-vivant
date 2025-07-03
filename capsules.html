@@ -1,122 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <title>Capsules Spirituelles</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      margin: 0;
-      font-family: "Courier New", monospace;
-      background-color: black;
-      color: #00ff00;
-      overflow-x: hidden;
-    }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-
-    .content {
-      position: relative;
-      z-index: 1;
-      padding: 1.5rem;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    h1 {
-      color: #00ff00;
-      text-shadow: 0 0 10px #00ff00;
-    }
-
-    .capsule {
-      background: rgba(0, 255, 0, 0.1);
-      border: 1px solid #00ff00;
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 0 10px #00ff00;
-    }
-
-    .date {
-      font-size: 0.8em;
-      color: #88ff88;
-      margin-top: 0.5rem;
-    }
-
-    .share {
-      margin-top: 0.5rem;
-    }
-
-    .share a {
-      margin-right: 10px;
-      color: #00ff00;
-      text-decoration: none;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-      background: black;
-      color: #00ff00;
-      border: 1px solid #00ff00;
-      border-radius: 5px;
-    }
-
-    #reloadBtn {
-      background: transparent;
-      border: 1px solid #00ff00;
-      color: #00ff00;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 1rem;
-    }
-
-    @media screen and (max-width: 600px) {
-      .capsule {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="matrix-style.css">
 </head>
 <body>
-  <canvas id="matrixCanvas"></canvas>
-  <div class="content">
-    <h1>📡 Capsules Spirituelles</h1>
-    <input type="text" id="searchInput" placeholder="🔍 Rechercher une capsule...">
-    <button id="reloadBtn" onclick="window.location.reload()">🔁 Recharger</button>
-    <div id="capsules-container">Chargement...</div>
+  <div class="matrix-background">
+    <div class="header">
+      <img src="https://em-content.zobj.net/source/microsoft-teams/363/satellite-antenna_1f4e1.png" alt="antenna" class="icon" />
+      <h1>Capsules Spirituelles</h1>
+    </div>
+    <input type="text" id="search" placeholder="🔍 Rechercher une capsule...">
+    <button id="reload" onclick="loadCapsules()">🔄 Recharger</button>
+    <div id="capsules-container"></div>
   </div>
-
   <script type="module" src="capsules.js"></script>
-  <script>
-    // Animation Matrix
-    const canvas = document.getElementById("matrixCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-    let columns = canvas.width / 20;
-    let drops = Array(Math.floor(columns)).fill(1);
-
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0f0";
-      ctx.font = "16px Courier New";
-      for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-        ctx.fillText(text, i * 20, drops[i] * 20);
-        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-    setInterval(draw, 33);
-  </script>
 </body>
 </html>
+    
