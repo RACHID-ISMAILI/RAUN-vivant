@@ -1,48 +1,61 @@
 
-body {
-  background-color: black;
-  color: #00ff00;
-  font-family: 'Courier New', Courier, monospace;
-  text-align: center;
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
-
-.matrix-background {
+body, html {
+  height: 100%;
+  font-family: 'Courier New', Courier, monospace;
+  color: #00ff00;
+  background: black;
+  overflow: hidden;
+}
+canvas#matrixCanvas {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('https://media.tenor.com/J9Uj5Ew1T7UAAAAd/matrix-code.gif');
-  background-size: cover;
-  opacity: 0.15;
-  z-index: -1;
+  z-index: 0;
 }
-
 .container {
-  padding: 2em;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-top: 60px;
 }
-
 .profile-pic img {
-  width: 150px;
-  height: 150px;
   border-radius: 50%;
-  border: 3px solid lime;
-  box-shadow: 0 0 20px lime;
+  width: 180px;
+  height: 180px;
+  border: 5px solid #00ff00;
+  box-shadow: 0 0 30px #00ff00;
+  margin-bottom: 20px;
 }
-
+h1, h2 {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+p {
+  margin: 20px auto;
+  font-size: 18px;
+  max-width: 600px;
+}
 .buttons {
-  margin-top: 2em;
+  margin-top: 30px;
 }
-
 .btn {
   display: inline-block;
-  background-color: lime;
+  margin: 10px;
+  padding: 15px 25px;
+  background: #00ff00;
   color: black;
-  padding: 1em 2em;
-  margin: 0.5em;
   text-decoration: none;
-  border-radius: 8px;
   font-weight: bold;
+  border-radius: 10px;
+  transition: 0.3s ease;
+}
+.btn:hover {
+  background: black;
+  color: #00ff00;
+  border: 2px solid #00ff00;
 }
