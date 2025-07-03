@@ -2,10 +2,29 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Capsules RAUN</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: "Courier New", monospace;
+      padding: 20px;
+    }
+    .capsule {
+      border-left: 4px solid #00ff00;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+    .date {
+      font-size: 0.8em;
+      color: #88ff88;
+    }
+  </style>
 </head>
 <body>
-  <h1>Les Capsules</h1>
+  <h1>📡 Capsules Spirituelles</h1>
+  <div id="capsules-container">Chargement des capsules...</div>
+
+  <script type="module" src="capsules.js"></script>
 </body>
 </html>
