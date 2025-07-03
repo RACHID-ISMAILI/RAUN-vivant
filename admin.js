@@ -12,7 +12,13 @@ firebase.initializeApp(firebaseConfig);
 
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    window.location.href = "secret.html";
+    if (!window.location.href.includes("secret.html")) {
+      window.location.href = "secret.html";
+    }
+  } else {
+    if (window.location.href.includes("secret.html")) {
+      window.location.href = "admin.html";
+    }
   }
 });
 
