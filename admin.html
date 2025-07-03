@@ -1,18 +1,81 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Accès Admin RAUN</title>
+  <title>🔐 Accès Admin RAUN</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    input {
+      background: black;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1rem;
+      border-radius: 5px;
+      width: 300px;
+    }
+    button {
+      background: #00ff00;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-family: 'Courier New', Courier, monospace;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: #00cc00;
+    }
+    h1 {
+      margin-bottom: 30px;
+    }
+  </style>
 </head>
 <body>
   <h1>🔐 Accès Admin</h1>
-  <input type="email" placeholder="admin@raun.com" id="email" />
-  <input type="password" placeholder="••••••••" id="password" />
+  <input type="email" id="email" placeholder="admin@raun.com" />
+  <input type="password" id="password" placeholder="••••••••" />
   <button onclick="login()">Se connecter</button>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="admin.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "TA_CLE_API",
+      authDomain: "TON_PROJET.firebaseapp.com",
+      projectId: "TON_PROJET",
+      storageBucket: "TON_PROJET.appspot.com",
+      messagingSenderId: "TON_ID",
+      appId: "TON_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        window.location.href = "secret.html";
+      }
+    });
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch(error => alert("Erreur : " + error.message));
+    }
+  </script>
 </body>
 </html>
