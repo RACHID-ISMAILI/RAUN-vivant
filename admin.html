@@ -4,16 +4,15 @@
 <head>
   <meta charset="UTF-8" />
   <title>Accès Admin RAUN</title>
-  <link rel="stylesheet" href="css/matrix.css" />
 </head>
 <body>
-  <div class="matrix-background"></div>
-  <div class="admin-container">
-    <h1>🔐 Accès Admin</h1>
-    <input type="email" placeholder="admin@raun.com" id="email" />
-    <input type="password" placeholder="••••••••" id="password" />
-    <button onclick="login()">Se connecter</button>
-  </div>
-  <script src="js/admin.js"></script>
+  <h1>🔐 Accès Admin</h1>
+  <input type="email" placeholder="admin@raun.com" id="email" />
+  <input type="password" placeholder="••••••••" id="password" />
+  <button onclick="login()">Se connecter</button>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
