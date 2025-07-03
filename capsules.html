@@ -2,29 +2,99 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Capsules RAUN</title>
+  <title>Capsules Spirituelles</title>
   <style>
     body {
+      margin: 0;
+      font-family: "Courier New", monospace;
       background-color: black;
       color: #00ff00;
-      font-family: "Courier New", monospace;
-      padding: 20px;
+      overflow-x: hidden;
     }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
     .capsule {
-      border-left: 4px solid #00ff00;
-      padding-left: 10px;
-      margin-bottom: 20px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #00ff00;
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1rem 0;
+      box-shadow: 0 0 10px #00ff00;
     }
+
     .date {
       font-size: 0.8em;
       color: #88ff88;
+      margin-top: 0.5rem;
+    }
+
+    #reloadBtn {
+      background: transparent;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>📡 Capsules Spirituelles</h1>
-  <div id="capsules-container">Chargement des capsules...</div>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="content">
+    <h1>📡 Capsules Spirituelles</h1>
+    <button id="reloadBtn" onclick="window.location.reload()">🔁 Recharger</button>
+    <div id="capsules-container">Chargement...</div>
+  </div>
 
   <script type="module" src="capsules.js"></script>
+  <script>
+    // Effet Matrix animé
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    let columns = canvas.width / 20;
+    let drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0f0";
+      ctx.font = "16px Courier New";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        ctx.fillText(text, i * 20, drops[i] * 20);
+
+        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+  </script>
 </body>
 </html>
