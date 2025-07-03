@@ -15,16 +15,15 @@
       text-align: center;
       overflow-x: hidden;
     }
-    .video-container {
-      position: relative;
-      height: 300px;
-      overflow: hidden;
-      border-bottom: 2px solid #00ff00;
-    }
-    .video-container iframe {
+    .video-banner {
       width: 100%;
-      height: 100%;
-      border: none;
+      height: 200px;
+      overflow: hidden;
+    }
+    .video-banner video {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
     }
     .overlay-text {
       font-size: 1.5em;
@@ -70,9 +69,11 @@
 <body>
   <canvas id="matrix-canvas"></canvas>
 
-  <div class="video-container">
-    <iframe src="https://www.youtube.com/embed/qN3wfuPYTI4?autoplay=1&mute=1&loop=1&playlist=qN3wfuPYTI4"
-            title="RAUN Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <div class="video-banner">
+    <video autoplay muted loop playsinline>
+      <source src="matrix-banner.mp4" type="video/mp4">
+      Votre navigateur ne supporte pas la vidéo HTML5.
+    </video>
   </div>
 
   <div class="overlay-text">
