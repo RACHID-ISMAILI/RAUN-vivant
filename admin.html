@@ -16,9 +16,16 @@
   <div id="protected" style="display:none;">
     <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
     <button onclick="logout()">Se déconnecter</button>
+
+    <div id="capsule-form">
+      <h3>📜 Écrire une capsule</h3>
+      <textarea id="capsuleText" placeholder="Écris ta capsule ici..." rows="6" cols="60"></textarea><br>
+      <button onclick="saveCapsule()">Publier</button>
+    </div>
   </div>
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="auth.js"></script>
+  <script type="module" src="firestore.js"></script>
 </body>
 </html>
