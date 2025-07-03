@@ -1,4 +1,3 @@
-// auth.js
 import { auth } from './firebase.js';
 import {
   signInWithEmailAndPassword,
@@ -33,3 +32,11 @@ onAuthStateChanged(auth, (user) => {
     protectedContent.style.display = 'none';
   }
 });
+
+window.logout = () => {
+  signOut(auth).then(() => {
+    location.reload();
+  }).catch((error) => {
+    alert("Erreur lors de la déconnexion : " + error.message);
+  });
+};
