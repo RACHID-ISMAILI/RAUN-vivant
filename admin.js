@@ -1,47 +1,52 @@
 
-var firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network",
-  storageBucket: "raun-network.firebasestorage.app",
-  messagingSenderId: "541416001018",
-  appId: "1:541416001018:web:ba7efef5aea63a30206843",
-  measurementId: "G-FMMND6R3N9"
+  projectId: "raun-network"
 };
+
 firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-firebase.auth().onAuthStateChanged(function(user) {
-  console.log("Auth state changed, user:", user);
-  if (user) {
-    if (!window.location.href.includes("secret.html")) {
-      console.log("User connecté, redirection vers secret.html");
-      window.location.href = "secret.html";
-    } else {
-      console.log("Déjà sur secret.html, pas de redirection");
-    }
+const PASSWORD = "raun2025"; // à modifier si besoin
+
+function checkPassword() {
+  const input = document.getElementById("admin-password").value;
+  if (input === PASSWORD) {
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("admin-panel").style.display = "block";
+    loadComments();
   } else {
-    if (window.location.href.includes("secret.html")) {
-      console.log("User non connecté sur secret.html, redirection vers admin.html");
-      window.location.href = "admin.html";
-    }
+    alert("Mot de passe incorrect.");
   }
-});
-
-function login() {
-  var email = document.getElementById("email").value;
-  var password = document.getElementById("password").value;
-
-  firebase.auth().signInWithEmailAndPassword(email, password)
-    .catch(function(error) {
-      alert("Erreur de connexion : " + error.message);
-    });
 }
 
-function logout() {
-  firebase.auth().signOut().then(function() {
-    alert("Déconnecté avec succès");
-    window.location.href = "index.html";
-  }).catch(function(error) {
-    alert("Erreur lors de la déconnexion : " + error.message);
+document.getElementById("new-capsule-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = document.getElementById("title").value;
+  const content = document.getElementById("content").value;
+  await db.collection("capsules").add({
+    title,
+    content,
+    readCount: 0,
+    comments: []
+  });
+  alert("Capsule ajoutée !");
+  document.getElementById("new-capsule-form").reset();
+});
+
+function loadComments() {
+  const section = document.getElementById("comments-section");
+  db.collection("capsules").get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.comments && data.comments.length > 0) {
+        const div = document.createElement("div");
+        div.innerHTML = `<h3>${data.title}</h3><ul>` +
+          data.comments.map(c => `<li><b>${c.name}</b> : ${c.text} <i>(${new Date(c.timestamp).toLocaleString()})</i></li>`).join('') +
+          `</ul><hr>`;
+        section.appendChild(div);
+      }
+    });
   });
 }
