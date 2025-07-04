@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
           `;
           capsulesContainer.appendChild(capsule);
 
-          // ✅ Incrémenter les lectures si pas déjà comptée
           const key = "read_" + doc.id;
           if (!localStorage.getItem(key)) {
             db.collection("capsules").doc(doc.id).update({
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
               localStorage.setItem(key, "1");
               const countSpan = document.getElementById("read-" + doc.id);
               if (countSpan) {
-                countSpan.textContent = (data.readCount || 0) + 1;
+                countSpan.textContent = count + 1;
               }
             }).catch((error) => {
               console.error("Erreur mise à jour compteur :", error);
