@@ -1,32 +1,53 @@
-// Configuration Firebase - adapte avec ta config exacte
-var firebaseConfig = {
+
+// Firebase config
+const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network",
-  storageBucket: "raun-network.appspot.com",
-  messagingSenderId: "541416001018",
-  appId: "1:541416001018:web:ba7efef5aea63a30206843",
-  measurementId: "G-FMMND6R3N9"
+  projectId: "raun-network"
 };
+
 firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-var db = firebase.firestore();
+const container = document.getElementById("capsules-container");
 
-function displayCapsules() {
-  var container = document.getElementById("capsulesContainer");
-  container.innerHTML = "Chargement des capsules...";
-  db.collection("capsules").orderBy("timestamp", "desc").onSnapshot(function(snapshot) {
-    container.innerHTML = "";
-    snapshot.forEach(function(doc) {
-      var div = document.createElement("div");
-      div.className = "capsule";
-      div.textContent = doc.data().text || "Capsule vide";
-      container.appendChild(div);
+db.collection("capsules").get().then(snapshot => {
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <hr>
+      <h2>${data.title}</h2>
+      <p>${data.content}</p>
+      <p><strong>👁️ Lectures :</strong> ${data.readCount || 0}</p>
+      <div><strong>💬 Commentaires :</strong><ul>${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}</ul></div>
+      <form onsubmit="addComment('${doc.id}', this); return false;">
+        <input type="text" name="name" placeholder="Votre nom" required>
+        <input type="text" name="text" placeholder="Votre commentaire" required>
+        <button type="submit">Envoyer</button>
+      </form>
+    `;
+    container.appendChild(div);
+
+    db.collection("capsules").doc(doc.id).update({
+      readCount: (data.readCount || 0) + 1
     });
-  }, function(error) {
-    container.innerHTML = "Erreur lors du chargement des capsules.";
-    console.error("Erreur Firestore:", error);
+  });
+});
+
+function addComment(docId, form) {
+  const name = form.name.value;
+  const text = form.text.value;
+  const newComment = {
+    name: name,
+    text: text,
+    timestamp: new Date().toISOString()
+  };
+
+  db.collection("capsules").doc(docId).update({
+    comments: firebase.firestore.FieldValue.arrayUnion(newComment)
+  }).then(() => {
+    alert("Commentaire ajouté !");
+    location.reload();
   });
 }
-
-displayCapsules();
