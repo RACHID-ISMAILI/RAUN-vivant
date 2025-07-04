@@ -1,114 +1,47 @@
-const firebaseConfig = {
+
+var firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network"
+  projectId: "raun-network",
+  storageBucket: "raun-network.firebasestorage.app",
+  messagingSenderId: "541416001018",
+  appId: "1:541416001018:web:ba7efef5aea63a30206843",
+  measurementId: "G-FMMND6R3N9"
 };
-
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
-function publierCapsule() {
-  const titre = document.getElementById("capsuleTitle").value.trim();
-  const texte = document.getElementById("capsuleText").value.trim();
-  if (!texte) {
-    alert("Écris une capsule avant de publier.");
-    return;
+firebase.auth().onAuthStateChanged(function(user) {
+  console.log("Auth state changed, user:", user);
+  if (user) {
+    if (!window.location.href.includes("secret.html")) {
+      console.log("User connecté, redirection vers secret.html");
+      window.location.href = "secret.html";
+    } else {
+      console.log("Déjà sur secret.html, pas de redirection");
+    }
+  } else {
+    if (window.location.href.includes("secret.html")) {
+      console.log("User non connecté sur secret.html, redirection vers admin.html");
+      window.location.href = "admin.html";
+    }
   }
+});
 
-  db.collection("capsules").add({
-    title: titre || "...",
-    content: texte,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    alert("Capsule publiée 🔥");
-    document.getElementById("capsuleText").value = "";
-    document.getElementById("capsuleTitle").value = "";
-  }).catch(error => {
-    alert("Erreur : " + error.message);
-  });
+function login() {
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .catch(function(error) {
+      alert("Erreur de connexion : " + error.message);
+    });
 }
 
-function convertirTexte() {
-  db.collection("capsules").get().then(snapshot => {
-    const batch = db.batch();
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.texte && (!data.content || !data.title)) {
-        const docRef = db.collection("capsules").doc(doc.id);
-        batch.update(docRef, {
-          content: data.texte,
-          title: "..."
-        });
-      }
-    });
-    return batch.commit();
-  }).then(() => {
-    alert("🎉 Mise à jour terminée !");
-  }).catch(error => {
-    alert("Erreur pendant la mise à jour : " + error.message);
-  });
-}
-
-function corrigerCapsulesVides() {
-  db.collection("capsules").get().then(snapshot => {
-    const batch = db.batch();
-    let count = 0;
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const docRef = db.collection("capsules").doc(doc.id);
-      if ((!data.content || data.content.trim() === "") && data.texte && data.texte.trim() !== "") {
-        batch.update(docRef, {
-          content: data.texte,
-          title: data.title || "..."
-        });
-        count++;
-      }
-    });
-    if (count > 0) {
-      return batch.commit().then(() => {
-        alert(`✅ Capsules corrigées : ${count}`);
-      });
-    } else {
-      alert("👍 Aucune capsule à corriger");
-    }
-  }).catch(error => {
-    alert("❌ Erreur : " + error.message);
-  });
-}
-
-function remplirContentDepuisChampsSpirituels() {
-  db.collection("capsules").get().then(snapshot => {
-    const batch = db.batch();
-    let count = 0;
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const docRef = db.collection("capsules").doc(doc.id);
-      if (!data.content || data.content.trim() === "" || data.content === "Contenu vide") {
-        let nouveauContenu = "";
-        if (data.rappel && data.rappel.trim() !== "") {
-          nouveauContenu = data.rappel;
-        } else if (data.alignement && data.alignement.trim() !== "") {
-          nouveauContenu = data.alignement;
-        } else if (data.projection && data.projection.trim() !== "") {
-          nouveauContenu = data.projection;
-        }
-        if (nouveauContenu) {
-          batch.update(docRef, {
-            content: nouveauContenu,
-            title: data.title || "..."
-          });
-          count++;
-        }
-      }
-    });
-    if (count > 0) {
-      return batch.commit().then(() => {
-        alert(`✅ ${count} capsules corrigées avec contenu spirituel`);
-      });
-    } else {
-      alert("👍 Toutes les capsules sont déjà complètes !");
-    }
-  }).catch(error => {
-    alert("❌ Erreur : " + error.message);
+function logout() {
+  firebase.auth().signOut().then(function() {
+    alert("Déconnecté avec succès");
+    window.location.href = "index.html";
+  }).catch(function(error) {
+    alert("Erreur lors de la déconnexion : " + error.message);
   });
 }
