@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
               localStorage.setItem(key, "1");
               const countSpan = document.getElementById("read-" + doc.id);
               if (countSpan) {
-                countSpan.textContent = count + 1;
+                countSpan.textContent = (data.readCount || 0) + 1;
               }
             }).catch((error) => {
               console.error("Erreur mise à jour compteur :", error);
