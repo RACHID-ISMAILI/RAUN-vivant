@@ -1,3 +1,4 @@
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
@@ -9,11 +10,10 @@ const db = firebase.firestore();
 
 const container = document.getElementById("capsules-container");
 
-db.collection("capsules").get().then(snapshot => {
+db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
   snapshot.forEach(doc => {
     const data = doc.data();
 
-    // 🔥 Correction ici : on prend le texte s'il n'y a pas de content
     const title = data.title || "...";
     const content = data.content || data.texte || "Contenu vide";
 
@@ -23,11 +23,7 @@ db.collection("capsules").get().then(snapshot => {
       <h2>${title}</h2>
       <p>${content}</p>
       <p><strong>👁️ Lectures :</strong> ${data.readCount || 0}</p>
-      <div><strong>💬 Commentaires :</strong>
-        <ul>
-          ${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}
-        </ul>
-      </div>
+      <div><strong>💬 Commentaires :</strong><ul>${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}</ul></div>
       <form onsubmit="addComment('${doc.id}', this); return false;">
         <input type="text" name="name" placeholder="Votre nom" required>
         <input type="text" name="text" placeholder="Votre commentaire" required>
@@ -36,19 +32,17 @@ db.collection("capsules").get().then(snapshot => {
     `;
     container.appendChild(div);
 
-    // Incrémente lecture
     db.collection("capsules").doc(doc.id).update({
       readCount: (data.readCount || 0) + 1
     });
   });
 }).catch(error => {
-  container.innerHTML = "<p style='color:red;'>Erreur de chargement : " + error.message + "</p>";
+  container.innerHTML = "<p style='color:red;'>Erreur : " + error.message + "</p>";
 });
 
 function addComment(docId, form) {
   const name = form.name.value;
   const text = form.text.value;
-
   const newComment = {
     name: name,
     text: text,
@@ -64,3 +58,4 @@ function addComment(docId, form) {
     alert("Erreur : " + error.message);
   });
 }
+</script>
