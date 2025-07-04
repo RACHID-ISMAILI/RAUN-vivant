@@ -3,61 +3,53 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Connexion à l’espace RAUN 🔐</title>
+  <title>Connexion à l’espace RAUN</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <style>
     body {
       background-color: black;
       color: lime;
       font-family: monospace;
-      text-align: center;
-      padding: 40px;
+      padding: 20px;
     }
-    input {
+    input, button {
       background-color: black;
       color: lime;
       border: 1px solid lime;
       padding: 5px;
-      font-family: monospace;
-      margin: 5px;
-    }
-    button {
-      background-color: black;
-      color: lime;
-      border: 1px solid lime;
-      padding: 5px 10px;
-      font-family: monospace;
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
   <h2>🔐 Connexion à l’espace RAUN</h2>
-  <input type="email" placeholder="Email" id="email" value="raun@rachid.com"><br>
-  <input type="password" placeholder="Mot de passe" id="password"><br>
+  <input type="email" id="email" placeholder="Email" /><br />
+  <input type="password" id="password" placeholder="Mot de passe" /><br />
   <button onclick="login()">Se connecter</button>
   <br><br>
-  <a href="index.html">
-    <button>🔙 Retour à la page publique</button>
-  </a>
+  <a href="index.html"><button>Retour à la page publique</button></a>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script>
-    var firebaseConfig = {
+    const firebaseConfig = {
       apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
       authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network"
+      projectId: "raun-network",
     };
+
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      firebase.auth().signInWithEmailAndPassword(email, password)
+
+      auth.signInWithEmailAndPassword(email, password)
         .then(() => {
           window.location.href = "admin.html";
         })
         .catch((error) => {
-          alert("Erreur de connexion : " + error.message);
+          alert("Erreur : " + error.message);
         });
     }
   </script>
