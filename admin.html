@@ -61,3 +61,56 @@
         alert("Capsule publiée 🔥");
         document.getElementById("capsuleText").value = "";
         document.getElementById("capsuleTitle").value = "";
+      })
+      .catch((error) => {
+        alert("Erreur : " + error.message);
+      });
+    }
+
+    function convertirTexte() {
+      db.collection("capsules").get().then(snapshot => {
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.texte && (!data.content || !data.title)) {
+            const docRef = db.collection("capsules").doc(doc.id);
+            batch.update(docRef, {
+              content: data.texte,
+              title: "..."
+            });
+          }
+        });
+        return batch.commit();
+      }).then(() => {
+        alert("🎉 Mise à jour terminée !");
+      }).catch(error => {
+        alert("Erreur pendant la mise à jour : " + error.message);
+      });
+    }
+
+    function corrigerCapsulesVides() {
+      db.collection("capsules").get().then(snapshot => {
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const docRef = db.collection("capsules").doc(doc.id);
+
+          let updateData = {};
+          if (!data.title) updateData.title = "...";
+          if (!data.content && data.texte) updateData.content = data.texte;
+          else if (!data.content) updateData.content = "Contenu vide";
+
+          if (Object.keys(updateData).length > 0) {
+            batch.update(docRef, updateData);
+          }
+        });
+        return batch.commit();
+      }).then(() => {
+        alert("✅ Capsules vides corrigées !");
+      }).catch(error => {
+        alert("Erreur : " + error.message);
+      });
+    }
+  </script>
+</body>
+</html>
