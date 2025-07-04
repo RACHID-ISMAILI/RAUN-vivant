@@ -13,6 +13,7 @@
       color: lime;
       font-family: monospace;
       padding: 20px;
+      display: none;
     }
     h2, h3 {
       color: #00ff00;
@@ -47,15 +48,20 @@
       apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
       authDomain: "raun-network.firebaseapp.com",
       projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    auth.onAuthStateChanged(function(user) {
+    firebase.auth().onAuthStateChanged(function(user) {
       if (!user) {
         window.location.href = "login.html";
+      } else {
+        document.body.style.display = "block";
       }
     });
 
