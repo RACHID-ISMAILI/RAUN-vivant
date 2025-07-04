@@ -1,5 +1,4 @@
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
@@ -14,11 +13,13 @@ const container = document.getElementById("capsules-container");
 db.collection("capsules").get().then(snapshot => {
   snapshot.forEach(doc => {
     const data = doc.data();
+    const title = data.title || "Sans titre";
+    const content = data.content || data.texte || "Contenu vide";
     const div = document.createElement("div");
     div.innerHTML = `
       <hr>
-      <h2>${data.title}</h2>
-      <p>${data.content}</p>
+      <h2>${title}</h2>
+      <p>${content}</p>
       <p><strong>👁️ Lectures :</strong> ${data.readCount || 0}</p>
       <div><strong>💬 Commentaires :</strong><ul>${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}</ul></div>
       <form onsubmit="addComment('${doc.id}', this); return false;">
