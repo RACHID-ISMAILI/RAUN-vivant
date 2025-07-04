@@ -1,1 +1,81 @@
-body { background-color: black; color: lime; font-family: monospace; }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body, html {
+  height: 100%;
+  font-family: 'Courier New', Courier, monospace;
+  color: #00ff00;
+  background: black;
+  overflow: hidden;
+}
+canvas#matrixCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-top: 60px;
+}
+.profile-pic img {
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+  border: 5px solid #00ff00;
+  box-shadow: 0 0 30px #00ff00;
+  margin-bottom: 20px;
+}
+h1, h2 {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+p {
+  margin: 20px auto;
+  font-size: 18px;
+  max-width: 600px;
+}
+.buttons {
+  margin-top: 30px;
+}
+.btn {
+  display: inline-block;
+  margin: 10px;
+  padding: 15px 25px;
+  background: #00ff00;
+  color: black;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 10px;
+  transition: 0.3s ease;
+}
+.btn:hover {
+  background: black;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+}
+
+.capsules-box {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: rgba(0, 255, 0, 0.05);
+  border: 1px solid #00ff00;
+  border-radius: 10px;
+}
+.capsule {
+  border-bottom: 1px solid #00ff00;
+  padding: 10px 0;
+}
+.capsule p {
+  font-size: 18px;
+}
+.capsule .date {
+  font-size: 12px;
+  color: #00ff00;
+}
