@@ -55,10 +55,10 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // ✅ Protection : rediriger si pas connecté
-    auth.onAuthStateChanged(user => {
+    // 🔐 Sécurité : Redirection si non connecté
+    firebase.auth().onAuthStateChanged(function(user) {
       if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
       }
     });
 
@@ -71,13 +71,11 @@
     async function publishCapsule() {
       const text = document.getElementById("capsuleInput").value;
       if (text.trim() === "") return;
-
       await db.collection("capsules").add({
         text,
-        readCount: 0, // ✅ Utiliser readCount (et non views)
+        views: 0,
         timestamp: new Date()
       });
-
       document.getElementById("capsuleInput").value = "";
       alert("Capsule publiée !");
     }
