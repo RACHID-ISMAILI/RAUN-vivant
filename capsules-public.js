@@ -1,38 +1,48 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+  authDomain: "raun-network.firebaseapp.com",
+  projectId: "raun-network"
+};
 
-document.addEventListener("DOMContentLoaded", function () {
-  const capsulesContainer = document.getElementById("capsules");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  function afficherCapsules() {
-    firebase.firestore().collection("capsules").orderBy("timestamp", "desc").get()
-      .then((querySnapshot) => {
-        capsulesContainer.innerHTML = "";
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const titre = data.title || "...";
-          const contenu = data.text?.trim() ||
-                          data.content?.trim() ||
-                          data.rappel?.trim() ||
-                          data.alignement?.trim() ||
-                          data.projection?.trim() ||
-                          "Contenu vide";
-          const count = data.readCount || 0;
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("capsules-container");
 
-          const capsule = document.createElement("div");
-          capsule.innerHTML = `
-            <hr />
-            <h3>${titre}</h3>
-            <p><span style="color:lime">${contenu}</span></p>
-            <p>👁️ <strong>Lectures</strong> : ${count}</p>
-            <p>💬 <strong>Commentaires</strong> :</p>
-            <input placeholder="Votre nom" class="nom" />
-            <input placeholder="Votre commentaire" class="commentaire" />
-            <button onclick="envoyerCommentaire('${doc.id}', this)">Envoyer</button>
-            <div id="commentaires-${doc.id}"></div>
-          `;
-          capsulesContainer.appendChild(capsule);
+  db.collection("capsules").orderBy("timestamp", "desc").get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        container.innerHTML = "<p>Aucune capsule disponible pour le moment.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const titre = data.title || "...";
+        const contenu = data.content?.trim() ||
+                        data.texte?.trim() ||
+                        data.rappel?.trim() ||
+                        data.alignement?.trim() ||
+                        data.projection?.trim() ||
+                        "Contenu vide";
+        const count = data.readCount || 0;
+
+        const capsule = document.createElement("div");
+        capsule.innerHTML = `
+          <hr>
+          <h3>${titre}</h3>
+          <p><span style="color:lime">${contenu}</span></p>
+          <p>👁️ Lectures : ${count}</p>
+        `;
+        container.appendChild(capsule);
+
+        db.collection("capsules").doc(doc.id).update({
+          readCount: count + 1
         });
       });
-  }
-
-  afficherCapsules();
+    })
+    .catch(error => {
+      container.innerHTML = `<p style="color:red;">Erreur de chargement : ${error.message}</p>`;
+    });
 });
