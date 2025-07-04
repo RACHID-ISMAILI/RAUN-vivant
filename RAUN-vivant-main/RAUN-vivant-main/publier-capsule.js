@@ -1,15 +1,28 @@
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+  authDomain: "raun-network.firebaseapp.com",
+  projectId: "raun-network"
+};
+
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 function publierCapsule() {
-  const text = document.getElementById("capsuleText").value;
-  if (!text.trim()) {
+  const text = document.getElementById("capsuleText").value.trim();
+
+  if (!text) {
     alert("Écris une capsule avant de publier.");
     return;
   }
 
+  const title = text.split(" ").slice(0, 5).join(" ") + "...";
+
   db.collection("capsules").add({
-    texte: text,
-    readCount: 0, // 👈 Initialiser le compteur de lecture
+    title: title,
+    content: text,
+    readCount: 0,
+    comments: [],
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(() => {

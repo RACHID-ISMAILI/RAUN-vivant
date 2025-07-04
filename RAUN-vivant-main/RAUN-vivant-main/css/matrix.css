@@ -1,0 +1,39 @@
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: black;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.matrix-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif');
+  background-size: cover;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+input, button {
+  margin: 8px;
+  padding: 10px;
+  font-size: 16px;
+  background-color: black;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  border-radius: 5px;
+}
