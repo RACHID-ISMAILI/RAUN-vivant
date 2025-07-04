@@ -29,9 +29,10 @@
   <textarea id="capsuleText" placeholder="Contenu"></textarea>
   <button onclick="publierCapsule()">Publier</button>
 
-  <h2>🛠️ Mettre à jour les anciennes capsules</h2>
+  <h2>🛠️ Outils de mise à jour</h2>
   <button onclick="convertirTexte()">🔁 Convertir texte → content/title</button>
-  <button onclick="corrigerCapsulesVides()">⚙️ Corriger capsules vides</button>
+  <button onclick="corrigerCapsulesVides()">⚙️ Corriger capsules 'Contenu vide'</button>
+  <button onclick="remplirContentDepuisChampsSpirituels()">✨ Corriger avec rappel / alignement / projection</button>
 
   <script>
     const firebaseConfig = {
@@ -56,13 +57,11 @@
         title: titre || "...",
         content: texte,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      .then(() => {
+      }).then(() => {
         alert("Capsule publiée 🔥");
         document.getElementById("capsuleText").value = "";
         document.getElementById("capsuleTitle").value = "";
-      })
-      .catch((error) => {
+      }).catch(error => {
         alert("Erreur : " + error.message);
       });
     }
@@ -91,24 +90,72 @@
     function corrigerCapsulesVides() {
       db.collection("capsules").get().then(snapshot => {
         const batch = db.batch();
+        let count = 0;
+
         snapshot.forEach(doc => {
           const data = doc.data();
           const docRef = db.collection("capsules").doc(doc.id);
 
-          let updateData = {};
-          if (!data.title) updateData.title = "...";
-          if (!data.content && data.texte) updateData.content = data.texte;
-          else if (!data.content) updateData.content = "Contenu vide";
-
-          if (Object.keys(updateData).length > 0) {
-            batch.update(docRef, updateData);
+          if ((!data.content || data.content.trim() === "") && data.texte && data.texte.trim() !== "") {
+            batch.update(docRef, {
+              content: data.texte,
+              title: data.title || "..."
+            });
+            count++;
           }
         });
-        return batch.commit();
-      }).then(() => {
-        alert("✅ Capsules vides corrigées !");
+
+        if (count > 0) {
+          return batch.commit().then(() => {
+            alert(`✅ Capsules corrigées : ${count}`);
+          });
+        } else {
+          alert("👍 Aucune capsule à corriger");
+        }
       }).catch(error => {
-        alert("Erreur : " + error.message);
+        alert("❌ Erreur : " + error.message);
+      });
+    }
+
+    function remplirContentDepuisChampsSpirituels() {
+      db.collection("capsules").get().then(snapshot => {
+        const batch = db.batch();
+        let count = 0;
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const docRef = db.collection("capsules").doc(doc.id);
+
+          if (!data.content || data.content.trim() === "" || data.content === "Contenu vide") {
+            let nouveauContenu = "";
+
+            if (data.rappel && data.rappel.trim() !== "") {
+              nouveauContenu = data.rappel;
+            } else if (data.alignement && data.alignement.trim() !== "") {
+              nouveauContenu = data.alignement;
+            } else if (data.projection && data.projection.trim() !== "") {
+              nouveauContenu = data.projection;
+            }
+
+            if (nouveauContenu) {
+              batch.update(docRef, {
+                content: nouveauContenu,
+                title: data.title || "..."
+              });
+              count++;
+            }
+          }
+        });
+
+        if (count > 0) {
+          return batch.commit().then(() => {
+            alert(`✅ ${count} capsules corrigées avec contenu spirituel`);
+          });
+        } else {
+          alert("👍 Toutes les capsules sont déjà complètes !");
+        }
+      }).catch(error => {
+        alert("❌ Erreur : " + error.message);
       });
     }
   </script>
