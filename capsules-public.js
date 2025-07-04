@@ -1,45 +1,37 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-  const capsulesContainer = document.getElementById("capsulesContainer");
-
-  firebase.initializeApp({
-    apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-    authDomain: "raun-network.firebaseapp.com",
-    projectId: "raun-network"
-  });
-
-  const db = firebase.firestore();
+  const capsulesContainer = document.getElementById("capsules");
 
   function afficherCapsules() {
-    db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
-      let html = "";
+    firebase.firestore().collection("capsules").orderBy("timestamp", "desc").get()
+      .then((querySnapshot) => {
+        capsulesContainer.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const titre = data.title || "...";
+          const contenu = data.text?.trim() ||
+                          data.content?.trim() ||
+                          data.rappel?.trim() ||
+                          data.alignement?.trim() ||
+                          data.projection?.trim() ||
+                          "Contenu vide";
+          const count = data.readCount || 0;
 
-      snapshot.forEach(doc => {
-        const capsule = doc.data();
-        const id = doc.id;
-
-        const titre = capsule.title || "...";
-        const contenu = capsule.text || capsule.content || capsule.rappel || capsule.alignement || capsule.projection || "Contenu vide";
-        const readCount = capsule.readCount || 0;
-
-        html += `
-          <div class="capsule">
-            <h3>...</h3>
-            <p><strong>${titre}</strong></p>
-            <p>${contenu}</p>
-            <p>👁️ <strong>Lectures</strong> : ${readCount}</p>
-            <p>💬 <strong>Commentaires</strong> :</p>
-            <div id="comments-${id}"></div>
-            <input type="text" placeholder="Votre nom" id="name-${id}" />
-            <input type="text" placeholder="Votre commentaire" id="comment-${id}" />
-            <button onclick="envoyerCommentaire('${id}')">Envoyer</button>
+          const capsule = document.createElement("div");
+          capsule.innerHTML = `
             <hr />
-          </div>
-        `;
+            <h3>...</h3>
+            <p><span style="color:lime">${contenu}</span></p>
+            <p>👁️ <strong>Lectures</strong> : ${count}</p>
+            <p>💬 <strong>Commentaires</strong> :</p>
+            <input placeholder="Votre nom" class="nom" />
+            <input placeholder="Votre commentaire" class="commentaire" />
+            <button onclick="envoyerCommentaire('${doc.id}', this)">Envoyer</button>
+            <div id="commentaires-${doc.id}"></div>
+          `;
+          capsulesContainer.appendChild(capsule);
+        });
       });
-
-      capsulesContainer.innerHTML = html;
-    });
   }
 
   afficherCapsules();
