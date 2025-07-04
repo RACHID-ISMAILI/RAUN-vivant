@@ -1,4 +1,4 @@
-<script>
+
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
@@ -13,7 +13,6 @@ const container = document.getElementById("capsules-container");
 db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
   snapshot.forEach(doc => {
     const data = doc.data();
-
     const title = data.title || "...";
     const content = data.content || data.texte || "Contenu vide";
 
@@ -58,4 +57,3 @@ function addComment(docId, form) {
     alert("Erreur : " + error.message);
   });
 }
-</script>
