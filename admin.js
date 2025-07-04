@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
@@ -8,95 +7,108 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const PASSWORD = "raun2025";
-
-function checkPassword() {
-  const input = document.getElementById("admin-password").value;
-  if (input === PASSWORD) {
-    document.getElementById("auth").style.display = "none";
-    document.getElementById("admin-panel").style.display = "block";
-    loadComments();
-  } else {
-    alert("Mot de passe incorrect.");
+function publierCapsule() {
+  const titre = document.getElementById("capsuleTitle").value.trim();
+  const texte = document.getElementById("capsuleText").value.trim();
+  if (!texte) {
+    alert("Écris une capsule avant de publier.");
+    return;
   }
+
+  db.collection("capsules").add({
+    title: titre || "...",
+    content: texte,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    alert("Capsule publiée 🔥");
+    document.getElementById("capsuleText").value = "";
+    document.getElementById("capsuleTitle").value = "";
+  }).catch(error => {
+    alert("Erreur : " + error.message);
+  });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("new-capsule-form");
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const title = document.getElementById("title").value;
-      const content = document.getElementById("content").value;
-      await db.collection("capsules").add({
-        title,
-        content,
-        readCount: 0,
-        comments: []
-      });
-      alert("Capsule ajoutée !");
-      form.reset();
-    });
-  }
-});
-
-function loadComments() {
-  const section = document.getElementById("comments-section");
-  section.innerHTML = "";
+function convertirTexte() {
   db.collection("capsules").get().then(snapshot => {
+    const batch = db.batch();
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.comments && data.comments.length > 0) {
-        const div = document.createElement("div");
-        div.innerHTML = `<h3>${data.title || "Sans titre"}</h3><ul id="list-${doc.id}"></ul><hr>`;
-        section.appendChild(div);
-        const list = div.querySelector(`#list-${doc.id}`);
-
-        data.comments.forEach((c, index) => {
-          const li = document.createElement("li");
-          li.innerHTML = `
-            <b>${c.name}</b> : ${c.text} <i>(${new Date(c.timestamp).toLocaleString()})</i>
-            ${c.reply ? `<br><b>↪️ Réponse admin :</b> ${c.reply}` : ""}
-            <br>
-            <input type="text" placeholder="Répondre..." id="reply-${doc.id}-${index}" />
-            <button onclick="replyComment('${doc.id}', ${index})">Répondre</button>
-            <button onclick="deleteComment('${doc.id}', ${index})">🗑 Supprimer</button>
-          `;
-          list.appendChild(li);
+      if (data.texte && (!data.content || !data.title)) {
+        const docRef = db.collection("capsules").doc(doc.id);
+        batch.update(docRef, {
+          content: data.texte,
+          title: "..."
         });
       }
     });
+    return batch.commit();
+  }).then(() => {
+    alert("🎉 Mise à jour terminée !");
+  }).catch(error => {
+    alert("Erreur pendant la mise à jour : " + error.message);
   });
 }
 
-function replyComment(docId, index) {
-  const input = document.getElementById(`reply-${docId}-${index}`);
-  const replyText = input.value;
-  if (!replyText) return;
-
-  db.collection("capsules").doc(docId).get().then(doc => {
-    const data = doc.data();
-    data.comments[index].reply = replyText;
-    db.collection("capsules").doc(docId).update({
-      comments: data.comments
-    }).then(() => {
-      alert("Réponse ajoutée !");
-      loadComments();
+function corrigerCapsulesVides() {
+  db.collection("capsules").get().then(snapshot => {
+    const batch = db.batch();
+    let count = 0;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const docRef = db.collection("capsules").doc(doc.id);
+      if ((!data.content || data.content.trim() === "") && data.texte && data.texte.trim() !== "") {
+        batch.update(docRef, {
+          content: data.texte,
+          title: data.title || "..."
+        });
+        count++;
+      }
     });
+    if (count > 0) {
+      return batch.commit().then(() => {
+        alert(`✅ Capsules corrigées : ${count}`);
+      });
+    } else {
+      alert("👍 Aucune capsule à corriger");
+    }
+  }).catch(error => {
+    alert("❌ Erreur : " + error.message);
   });
 }
 
-function deleteComment(docId, index) {
-  if (!confirm("Confirmer la suppression de ce commentaire ?")) return;
-
-  db.collection("capsules").doc(docId).get().then(doc => {
-    const data = doc.data();
-    data.comments.splice(index, 1);
-    db.collection("capsules").doc(docId).update({
-      comments: data.comments
-    }).then(() => {
-      alert("Commentaire supprimé.");
-      loadComments();
+function remplirContentDepuisChampsSpirituels() {
+  db.collection("capsules").get().then(snapshot => {
+    const batch = db.batch();
+    let count = 0;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const docRef = db.collection("capsules").doc(doc.id);
+      if (!data.content || data.content.trim() === "" || data.content === "Contenu vide") {
+        let nouveauContenu = "";
+        if (data.rappel && data.rappel.trim() !== "") {
+          nouveauContenu = data.rappel;
+        } else if (data.alignement && data.alignement.trim() !== "") {
+          nouveauContenu = data.alignement;
+        } else if (data.projection && data.projection.trim() !== "") {
+          nouveauContenu = data.projection;
+        }
+        if (nouveauContenu) {
+          batch.update(docRef, {
+            content: nouveauContenu,
+            title: data.title || "..."
+          });
+          count++;
+        }
+      }
     });
+    if (count > 0) {
+      return batch.commit().then(() => {
+        alert(`✅ ${count} capsules corrigées avec contenu spirituel`);
+      });
+    } else {
+      alert("👍 Toutes les capsules sont déjà complètes !");
+    }
+  }).catch(error => {
+    alert("❌ Erreur : " + error.message);
   });
 }

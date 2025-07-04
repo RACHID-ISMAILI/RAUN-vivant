@@ -1,0 +1,16 @@
+body {
+  background: black;
+  color: lime;
+  font-family: monospace;
+  padding: 20px;
+}
+input, textarea {
+  display: block;
+  margin: 5px 0;
+}
+button {
+  margin-top: 10px;
+}
+.green {
+  color: lime;
+}
