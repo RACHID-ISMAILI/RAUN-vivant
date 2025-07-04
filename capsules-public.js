@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
@@ -13,7 +12,9 @@ const container = document.getElementById("capsules-container");
 db.collection("capsules").get().then(snapshot => {
   snapshot.forEach(doc => {
     const data = doc.data();
-    const title = data.title || "Sans titre";
+
+    // 🔥 Correction ici : on prend le texte s'il n'y a pas de content
+    const title = data.title || "...";
     const content = data.content || data.texte || "Contenu vide";
 
     const div = document.createElement("div");
@@ -22,7 +23,11 @@ db.collection("capsules").get().then(snapshot => {
       <h2>${title}</h2>
       <p>${content}</p>
       <p><strong>👁️ Lectures :</strong> ${data.readCount || 0}</p>
-      <div><strong>💬 Commentaires :</strong><ul>${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}</ul></div>
+      <div><strong>💬 Commentaires :</strong>
+        <ul>
+          ${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}
+        </ul>
+      </div>
       <form onsubmit="addComment('${doc.id}', this); return false;">
         <input type="text" name="name" placeholder="Votre nom" required>
         <input type="text" name="text" placeholder="Votre commentaire" required>
@@ -31,17 +36,19 @@ db.collection("capsules").get().then(snapshot => {
     `;
     container.appendChild(div);
 
+    // Incrémente lecture
     db.collection("capsules").doc(doc.id).update({
       readCount: (data.readCount || 0) + 1
     });
   });
 }).catch(error => {
-  container.innerHTML = "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
+  container.innerHTML = "<p style='color:red;'>Erreur de chargement : " + error.message + "</p>";
 });
 
 function addComment(docId, form) {
   const name = form.name.value;
   const text = form.text.value;
+
   const newComment = {
     name: name,
     text: text,
