@@ -30,14 +30,26 @@ document.addEventListener("DOMContentLoaded", function () {
             <hr />
             <h3>${titre}</h3>
             <p><span style="color:lime">${contenu}</span></p>
-            <p>👁️ <strong>Lectures</strong> : ${count}</p>
+            <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
           `;
           capsulesContainer.appendChild(capsule);
 
-          // Incrémenter les lectures
-          db.collection("capsules").doc(doc.id).update({
-            readCount: count + 1
-          });
+          // ✅ Incrémenter les lectures si pas déjà comptée
+          const key = "read_" + doc.id;
+          if (!localStorage.getItem(key)) {
+            db.collection("capsules").doc(doc.id).update({
+              readCount: firebase.firestore.FieldValue.increment(1)
+            }).then(() => {
+              localStorage.setItem(key, "1");
+              // Met à jour visuellement
+              const countSpan = document.getElementById("read-" + doc.id);
+              if (countSpan) {
+                countSpan.textContent = count + 1;
+              }
+            }).catch((error) => {
+              console.error("Erreur mise à jour compteur :", error);
+            });
+          }
         });
       }).catch((error) => {
         capsulesContainer.innerHTML = "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
