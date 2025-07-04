@@ -2,78 +2,31 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Accès Admin RAUN</title>
+  <title>RAUN Vivant - Capsules</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     body {
-      background: black;
-      color: #00ff00;
+      background-color: black;
+      color: lime;
       font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
-    input {
-      background: black;
-      border: 2px solid #00ff00;
-      color: #00ff00;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-      border-radius: 5px;
-      width: 300px;
+    h2 {
+      color: cyan;
     }
-    button {
-      background: #00ff00;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 5px;
+    input, textarea, button {
+      margin-top: 5px;
       font-family: monospace;
-      margin-top: 10px;
-      transition: background-color 0.3s;
     }
-    button:hover {
-      background: #00cc00;
-    }
-    .btn-return {
-      background: transparent;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 8px 15px;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: monospace;
-      text-decoration: none;
-      display: inline-block;
-      transition: background-color 0.3s;
-    }
-    .btn-return:hover {
-      background: #00ff00;
-      color: black;
-    }
-    h1 {
-      margin-bottom: 20px;
+    hr {
+      border: 1px solid lime;
     }
   </style>
 </head>
 <body>
-  <h1>🔐 Accès Admin</h1>
-
-  <!-- Bouton retour -->
-  <a href="index.html" class="btn-return">← Retour à la page publique</a>
-
-  <input type="email" placeholder="admin@raun.com" id="email" />
-  <input type="password" placeholder="••••••••" id="password" />
-  <button onclick="login()">Se connecter</button>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="admin.js"></script>
+  <h2>🧠 Capsules de Conscience</h2>
+  <div id="capsules"></div>
+  <script src="capsules-public.js"></script>
 </body>
 </html>
