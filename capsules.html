@@ -66,14 +66,13 @@
       const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
       snapshot.forEach(async (doc) => {
         const capsule = doc.data();
-        const views = capsule.views || 0;
         const capsuleId = doc.id;
         const capsuleDiv = document.createElement("div");
         capsuleDiv.className = "capsule";
         capsuleDiv.innerHTML = `
           <p>...</p>
           <p>${capsule.text}</p>
-          <p>👁 Lectures : <span id="views-${capsuleId}">${views}</span></p>
+          <p>👁 Lectures : <span id="views-${capsuleId}">Chargement...</span></p>
           <div class="comment-box" id="comments-${capsuleId}">
             <strong>💬 Commentaires :</strong>
             <div id="comment-list-${capsuleId}">Chargement...</div>
@@ -89,15 +88,24 @@
         if (!localStorage.getItem(storageKey)) {
           db.collection("capsules").doc(capsuleId).update({
             views: firebase.firestore.FieldValue.increment(1)
-          }).then(() => {
+          }).then(async () => {
             localStorage.setItem(storageKey, "1");
+            const updatedDoc = await db.collection("capsules").doc(capsuleId).get();
+            const updatedViews = updatedDoc.data().views || 0;
             const viewSpan = document.getElementById("views-" + capsuleId);
             if (viewSpan) {
-              viewSpan.textContent = views + 1;
+              viewSpan.textContent = updatedViews;
             }
           }).catch((error) => {
             console.error("Erreur compteur vues :", error);
           });
+        } else {
+          const docSnapshot = await db.collection("capsules").doc(capsuleId).get();
+          const currentViews = docSnapshot.data().views || 0;
+          const viewSpan = document.getElementById("views-" + capsuleId);
+          if (viewSpan) {
+            viewSpan.textContent = currentViews;
+          }
         }
       });
     }
