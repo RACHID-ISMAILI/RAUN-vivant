@@ -1,0 +1,1 @@
+// JavaScript principal pour Firebase et l'affichage sécurisé
