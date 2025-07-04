@@ -1,59 +1,46 @@
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-  authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network"
-};
+document.addEventListener("DOMContentLoaded", function () {
+  const capsulesContainer = document.getElementById("capsulesContainer");
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+  firebase.initializeApp({
+    apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+    authDomain: "raun-network.firebaseapp.com",
+    projectId: "raun-network"
+  });
 
-const container = document.getElementById("capsules-container");
+  const db = firebase.firestore();
 
-db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const title = data.title || "...";
-    const content = data.content || data.texte || "Contenu vide";
+  function afficherCapsules() {
+    db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
+      let html = "";
 
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <hr>
-      <h2>${title}</h2>
-      <p>${content}</p>
-      <p><strong>👁️ Lectures :</strong> ${data.readCount || 0}</p>
-      <div><strong>💬 Commentaires :</strong><ul>${(data.comments || []).map(c => `<li><b>${c.name}</b> : ${c.text}</li>`).join('')}</ul></div>
-      <form onsubmit="addComment('${doc.id}', this); return false;">
-        <input type="text" name="name" placeholder="Votre nom" required>
-        <input type="text" name="text" placeholder="Votre commentaire" required>
-        <button type="submit">Envoyer</button>
-      </form>
-    `;
-    container.appendChild(div);
+      snapshot.forEach(doc => {
+        const capsule = doc.data();
+        const id = doc.id;
 
-    db.collection("capsules").doc(doc.id).update({
-      readCount: (data.readCount || 0) + 1
+        const titre = capsule.title || "...";
+        const contenu = capsule.text || capsule.content || capsule.rappel || capsule.alignement || capsule.projection || "Contenu vide";
+        const readCount = capsule.readCount || 0;
+
+        html += `
+          <div class="capsule">
+            <h3>...</h3>
+            <p><strong>${titre}</strong></p>
+            <p>${contenu}</p>
+            <p>👁️ <strong>Lectures</strong> : ${readCount}</p>
+            <p>💬 <strong>Commentaires</strong> :</p>
+            <div id="comments-${id}"></div>
+            <input type="text" placeholder="Votre nom" id="name-${id}" />
+            <input type="text" placeholder="Votre commentaire" id="comment-${id}" />
+            <button onclick="envoyerCommentaire('${id}')">Envoyer</button>
+            <hr />
+          </div>
+        `;
+      });
+
+      capsulesContainer.innerHTML = html;
     });
-  });
-}).catch(error => {
-  container.innerHTML = "<p style='color:red;'>Erreur : " + error.message + "</p>";
+  }
+
+  afficherCapsules();
 });
-
-function addComment(docId, form) {
-  const name = form.name.value;
-  const text = form.text.value;
-  const newComment = {
-    name: name,
-    text: text,
-    timestamp: new Date().toISOString()
-  };
-
-  db.collection("capsules").doc(docId).update({
-    comments: firebase.firestore.FieldValue.arrayUnion(newComment)
-  }).then(() => {
-    alert("Commentaire ajouté !");
-    location.reload();
-  }).catch(error => {
-    alert("Erreur : " + error.message);
-  });
-}
