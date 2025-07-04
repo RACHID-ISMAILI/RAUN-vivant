@@ -15,15 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
                           data.alignement?.trim() ||
                           data.projection?.trim() ||
                           "Contenu vide";
-
-          const contenuAvecRetours = contenu.replace(/\n/g, "<br>");
           const count = data.readCount || 0;
 
           const capsule = document.createElement("div");
           capsule.innerHTML = `
             <hr />
-            <h3>...</h3>
-            <p><span style="color:lime">${contenuAvecRetours}</span></p>
+            <h3>${titre}</h3>
+            <p><span style="color:lime">${contenu}</span></p>
             <p>👁️ <strong>Lectures</strong> : ${count}</p>
             <p>💬 <strong>Commentaires</strong> :</p>
             <input placeholder="Votre nom" class="nom" />
