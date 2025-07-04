@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Publier une Capsule</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="publier-capsule.js" defer></script>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 2em;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    button {
+      padding: 0.5em 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Publier une Capsule</h1>
+  <textarea id="capsuleText" placeholder="Écris ta capsule ici..."></textarea><br>
+  <button onclick="publierCapsule()">Publier</button>
+</body>
+</html>
