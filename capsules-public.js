@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
   const firebaseConfig = {
     apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
@@ -41,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
               readCount: firebase.firestore.FieldValue.increment(1)
             }).then(() => {
               localStorage.setItem(key, "1");
-              // Met à jour visuellement
               const countSpan = document.getElementById("read-" + doc.id);
               if (countSpan) {
                 countSpan.textContent = count + 1;
