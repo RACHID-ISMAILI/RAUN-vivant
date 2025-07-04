@@ -13,9 +13,7 @@
       font-family: monospace;
       padding: 20px;
     }
-    h2, h3 {
-      color: #00ff00;
-    }
+    h2, h3 { color: #00ff00; }
     textarea, input, button {
       background-color: black;
       color: lime;
@@ -45,26 +43,20 @@
     const firebaseConfig = {
       apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
       authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network",
-      storageBucket: "raun-network.appspot.com",
-      messagingSenderId: "541416001018",
-      appId: "1:541416001018:web:ba7efef5aea63a30206843"
+      projectId: "raun-network"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // 🔐 Sécurité : Redirection si non connecté
     firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) {
-        window.location.href = "index.html";
-      }
+      if (!user) window.location.href = "login.html";
     });
 
     function logout() {
       auth.signOut().then(() => {
-        window.location.href = "index.html";
+        window.location.href = "login.html";
       });
     }
 
