@@ -1,10 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>RAUN Vivant - Capsules</title>
+  <title>Capsules de Conscience</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="capsules-public.js" defer></script>
   <style>
     body {
       background-color: black;
@@ -12,21 +14,13 @@
       font-family: monospace;
       padding: 20px;
     }
-    h2 {
-      color: cyan;
-    }
-    input, textarea, button {
-      margin-top: 5px;
-      font-family: monospace;
-    }
-    hr {
-      border: 1px solid lime;
-    }
+    h2 { color: magenta; }
+    textarea, input { width: 100%; margin-top: 10px; }
+    button { margin-top: 5px; padding: 5px 10px; }
   </style>
 </head>
 <body>
-  <h2>🧠 Capsules de Conscience</h2>
+  <h2>💭 Capsules de Conscience</h2>
   <div id="capsules"></div>
-  <script src="capsules-public.js"></script>
 </body>
 </html>

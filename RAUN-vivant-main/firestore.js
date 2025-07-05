@@ -1,4 +1,3 @@
-
 const db = firebase.firestore();
 
 function publierCapsule() {
@@ -10,6 +9,7 @@ function publierCapsule() {
 
   db.collection("capsules").add({
     texte: text,
+    readCount: 0, // 👈 Initialiser le compteur de lecture
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(() => {

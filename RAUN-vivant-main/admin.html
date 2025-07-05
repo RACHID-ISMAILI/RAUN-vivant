@@ -1,79 +1,97 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Accès Admin RAUN</title>
+  <title>Espace Admin RAUN 🔐</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     body {
-      background: black;
-      color: #00ff00;
+      background-color: black;
+      color: lime;
       font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
-    input {
-      background: black;
-      border: 2px solid #00ff00;
+    h2, h3 {
       color: #00ff00;
+    }
+    textarea, input, button {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      border: 1px solid lime;
+      padding: 5px;
+    }
+    .comment-block {
+      margin-top: 20px;
       padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-      border-radius: 5px;
-      width: 300px;
-    }
-    button {
-      background: #00ff00;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 5px;
-      font-family: monospace;
-      margin-top: 10px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background: #00cc00;
-    }
-    .btn-return {
-      background: transparent;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 8px 15px;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: monospace;
-      text-decoration: none;
-      display: inline-block;
-      transition: background-color 0.3s;
-    }
-    .btn-return:hover {
-      background: #00ff00;
-      color: black;
-    }
-    h1 {
-      margin-bottom: 20px;
+      border: 1px dashed lime;
     }
   </style>
 </head>
 <body>
-  <h1>🔐 Accès Admin</h1>
+  <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
+  <button onclick="logout()">Se déconnecter</button>
 
-  <!-- Bouton retour -->
-  <a href="index.html" class="btn-return">← Retour à la page publique</a>
+  <h3>📝 Écrire une capsule</h3>
+  <textarea id="capsuleInput" placeholder="Écris ta capsule ici..." rows="5" cols="50"></textarea><br>
+  <button onclick="publishCapsule()">Publier</button>
 
-  <input type="email" placeholder="admin@raun.com" id="email" />
-  <input type="password" placeholder="••••••••" id="password" />
-  <button onclick="login()">Se connecter</button>
+  <h3>💬 Commentaires récents</h3>
+  <div id="commentaires">Chargement...</div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="admin.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = "index.html";
+      });
+    }
+
+    async function publishCapsule() {
+      const text = document.getElementById("capsuleInput").value;
+      if (text.trim() === "") return;
+      await db.collection("capsules").add({
+        text,
+        views: 0,
+        timestamp: new Date()
+      });
+      document.getElementById("capsuleInput").value = "";
+      alert("Capsule publiée !");
+    }
+
+    async function loadCommentaires() {
+      const container = document.getElementById("commentaires");
+      const snapshot = await db.collection("commentaires").orderBy("timestamp", "desc").limit(20).get();
+      container.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "comment-block";
+        div.innerHTML = `
+          <strong>${data.author || "Anonyme"}</strong> : ${data.message}<br>
+          🕒 ${new Date(data.timestamp.toDate()).toLocaleString()}<br>
+          Capsule ID: ${data.capsuleId}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    loadCommentaires();
+  </script>
 </body>
 </html>
