@@ -2,56 +2,47 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Connexion RAUN 🔐</title>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <title>Connexion RAUN</title>
   <style>
     body {
       background-color: black;
       color: lime;
       font-family: monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
+      padding: 20px;
     }
     input, button {
-      margin: 10px;
-      padding: 10px;
-      background: black;
+      background-color: black;
       color: lime;
       border: 1px solid lime;
-      font-family: monospace;
+      padding: 5px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h2>🔐 Connexion à l’espace RAUN</h2>
-  <input type="email" id="email" placeholder="Email" />
-  <input type="password" id="password" placeholder="Mot de passe" />
+  <input id="email" type="email" placeholder="Email" /><br>
+  <input id="password" type="password" placeholder="Mot de passe" /><br>
   <button onclick="login()">Se connecter</button>
-  <p id="message"></p>
+  <button onclick="window.location.href='index.html'">Retour à la page publique</button>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
       authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network"
+      projectId: "raun-network",
     };
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => {
-          window.location.href = "admin.html";
-        })
-        .catch((error) => {
-          document.getElementById("message").innerText = "Erreur : " + error.message;
-        });
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => window.location.href = "admin.html")
+        .catch(error => alert("Erreur : " + error.message));
     }
   </script>
 </body>
