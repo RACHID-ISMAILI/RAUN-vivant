@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>QR Code RAUN</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <style>
     body {
       background-color: black;
@@ -28,17 +28,16 @@
 </head>
 <body>
   <h2>📱 Installe RAUN sur ton téléphone</h2>
-  <div id="qrcode"></div>
+  <canvas id="qrcode"></canvas>
   <a href="index.html">⬅️ Retour à l’accueil</a>
 
   <script>
-    const url = "https://rachidraun.github.io/RAUN-vivant/";
-    QRCode.toCanvas(document.getElementById('qrcode'), url, {
-      width: 200,
-      color: {
-        dark: '#00ff00',
-        light: '#000000'
-      }
+    const qr = new QRious({
+      element: document.getElementById('qrcode'),
+      value: 'https://rachid-ismaili.github.io/RAUN-vivant/',
+      size: 250,
+      background: 'black',
+      foreground: '#00ff00'
     });
   </script>
 </body>
