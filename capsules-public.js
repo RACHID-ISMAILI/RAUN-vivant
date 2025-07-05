@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
   const firebaseConfig = {
     apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
@@ -17,16 +16,16 @@ document.addEventListener("DOMContentLoaded", function () {
         capsulesContainer.innerHTML = "";
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const contenu = [
-            data.text,
-            data.content,
-            data.rappel,
-            data.alignement,
-            data.projection
-          ].filter(Boolean).join(" — ") || "Contenu vide";
+
+          const contenu =
+            data.text?.trim() ||
+            data.content?.trim() ||
+            data.rappel?.trim() ||
+            data.alignement?.trim() ||
+            data.projection?.trim() ||
+            "Contenu vide";
 
           const titre = data.title || "...";
-
           const count = data.readCount || 0;
 
           const capsule = document.createElement("div");
@@ -53,8 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           }
         });
-      }).catch((error) => {
-        capsulesContainer.innerHTML = "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
+      })
+      .catch((error) => {
+        capsulesContainer.innerHTML =
+          "<p style='color:red;'>Erreur de chargement des capsules : " +
+          error.message +
+          "</p>";
       });
   }
 
