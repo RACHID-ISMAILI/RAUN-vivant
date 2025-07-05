@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Code RAUN</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
+    a {
+      color: cyan;
+      margin-top: 30px;
+      font-size: 1.1rem;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>📱 Installe RAUN sur ton téléphone</h2>
+  <div id="qrcode"></div>
+  <a href="index.html">⬅️ Retour à l’accueil</a>
+
+  <script>
+    const url = "https://rachidraun.github.io/RAUN-vivant/";
+    QRCode.toCanvas(document.getElementById('qrcode'), url, {
+      width: 200,
+      color: {
+        dark: '#00ff00',
+        light: '#000000'
+      }
+    });
+  </script>
+</body>
+</html>
