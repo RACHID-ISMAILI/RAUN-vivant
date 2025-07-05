@@ -2,92 +2,28 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Capsules de Conscience</title>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <style>
-    body {
-      background-color: black;
-      color: lime;
-      font-family: monospace;
-      padding: 20px;
-    }
-    h2 {
-      color: fuchsia;
-    }
-    button {
-      background-color: black;
-      color: lime;
-      border: 1px solid lime;
-      padding: 5px 10px;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-  </style>
 </head>
-<body>
-  <button onclick="window.location.href='index.html'">↩ Retour à la page publique</button>
-  <h2>💭 Capsules de Conscience</h2>
-  <div id="capsules">Chargement des capsules...</div>
+<body style="background-color:black; color:lime; font-family:monospace;">
+  <div id="user-status"></div>
+  <button onclick="logout()">Déconnexion</button>
+
+  <h1>🧠 Capsules de Conscience</h1>
+  <p>💬 La vérité ne s'impose pas, elle s’éveille.</p>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-      authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const capsulesContainer = document.getElementById("capsules");
-
-    function afficherCapsules() {
-      db.collection("capsules").orderBy("timestamp", "desc").get()
-        .then((querySnapshot) => {
-          capsulesContainer.innerHTML = "";
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const contenu = data.text?.trim() ||
-                            data.content?.trim() ||
-                            data.rappel?.trim() ||
-                            data.alignement?.trim() ||
-                            data.projection?.trim() ||
-                            "Contenu vide";
-            const titre = data.title || "...";
-            const count = data.readCount || 0;
-
-            const capsule = document.createElement("div");
-            capsule.innerHTML = `
-              <hr />
-              <h3>${titre}</h3>
-              <p><span style="color:lime">${contenu}</span></p>
-              <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
-            `;
-            capsulesContainer.appendChild(capsule);
-
-            const key = "read_" + doc.id;
-            if (!localStorage.getItem(key)) {
-              db.collection("capsules").doc(doc.id).update({
-                readCount: firebase.firestore.FieldValue.increment(1)
-              }).then(() => {
-                localStorage.setItem(key, "1");
-                const countSpan = document.getElementById("read-" + doc.id);
-                if (countSpan) {
-                  countSpan.textContent = count + 1;
-                }
-              }).catch((error) => {
-                console.error("Erreur mise à jour compteur :", error);
-              });
-            }
-          });
-        }).catch((error) => {
-          capsulesContainer.innerHTML = "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
-        });
+    const user = localStorage.getItem("RAUN_user");
+    if (!user) {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("user-status").innerText = "🟢 Connecté : " + user;
     }
 
-    afficherCapsules();
+    function logout() {
+      localStorage.removeItem("RAUN_user");
+      window.location.href = "login.html";
+    }
   </script>
 </body>
 </html>
