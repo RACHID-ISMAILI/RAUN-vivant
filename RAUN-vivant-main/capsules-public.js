@@ -1,9 +1,9 @@
-
+// Configuration Firebase - adapte avec ta config exacte
 var firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
   projectId: "raun-network",
-  storageBucket: "raun-network.firebasestorage.app",
+  storageBucket: "raun-network.appspot.com",
   messagingSenderId: "541416001018",
   appId: "1:541416001018:web:ba7efef5aea63a30206843",
   measurementId: "G-FMMND6R3N9"
@@ -20,9 +20,12 @@ function displayCapsules() {
     snapshot.forEach(function(doc) {
       var div = document.createElement("div");
       div.className = "capsule";
-      div.textContent = doc.data().text;
+      div.textContent = doc.data().text || "Capsule vide";
       container.appendChild(div);
     });
+  }, function(error) {
+    container.innerHTML = "Erreur lors du chargement des capsules.";
+    console.error("Erreur Firestore:", error);
   });
 }
 
