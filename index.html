@@ -57,7 +57,24 @@
   }
 </style>
 </head>
+  <script>
+  const citations = [
+    "🌱 Le changement commence au plus profond du soi.",
+    "✨ Chaque instant de conscience est une victoire sur l’oubli.",
+    "🔥 Ce que tu éveilles en toi rayonne dans le monde.",
+    "💡 La vérité ne s'impose pas, elle s’éveille.",
+    "🌀 Le silence intérieur contient plus que mille paroles.",
+    "🌿 Avance doucement, mais en éveil.",
+    "⏳ L’instant présent est ton plus grand pouvoir."
+  ];
+
+  const citation = citations[Math.floor(Math.random() * citations.length)];
+  document.getElementById("citation").textContent = citation;
+</script>
+
 <body>
+  <div id="citation" style="color:cyan; font-style:italic; margin-bottom: 20px;"></div>
+
 <canvas id="matrix-canvas"></canvas>
 
 <img class="profile-img" src="profile.jpg" alt="Photo de Rachid" />
