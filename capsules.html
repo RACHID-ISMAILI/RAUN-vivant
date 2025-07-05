@@ -1,22 +1,76 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Capsules de Conscience</title>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="capsules.js" defer></script>
+  <meta charset="UTF-8" />
+  <title>Capsules de Conscience 🧠</title>
   <style>
-    body { background-color: black; color: lime; font-family: monospace; padding: 20px; }
-    h2 { color: cyan; }
-    .comment-section { margin-top: 10px; }
-    textarea { width: 100%; height: 50px; background: #111; color: lime; border: 1px solid lime; }
-    button { background: none; border: 1px solid lime; color: lime; padding: 5px 10px; margin-top: 5px; cursor: pointer; }
-    .comments-list { margin-top: 10px; }
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
+    }
+    .capsule {
+      border: 1px solid lime;
+      margin: 20px 0;
+      padding: 10px;
+    }
+    .comment {
+      border-top: 1px dashed #00ff00;
+      margin-top: 10px;
+      padding-top: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 50px;
+      margin-top: 10px;
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+    }
+    button {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      padding: 5px 10px;
+      margin-top: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h2>📘 Capsules de Conscience</h2>
-  <div id="capsules">Chargement...</div>
+  <h1>Capsules de Conscience 🧠</h1>
+
+  <div class="capsule" id="capsule-1">
+    <strong>Capsule #1 :</strong>
+    <p>La vérité ne s’impose pas, elle s’éveille.</p>
+    <div class="comments" id="comments-1"></div>
+    <textarea id="input-1" placeholder="Écris un commentaire..."></textarea>
+    <button onclick="addComment(1)">Commenter</button>
+  </div>
+
+  <script>
+    function addComment(id) {
+      const input = document.getElementById('input-' + id);
+      const text = input.value.trim();
+      if (text === "") return;
+      const key = 'comments-' + id;
+      let comments = JSON.parse(localStorage.getItem(key)) || [];
+      comments.push(text);
+      localStorage.setItem(key, JSON.stringify(comments));
+      input.value = "";
+      showComments(id);
+    }
+
+    function showComments(id) {
+      const key = 'comments-' + id;
+      const container = document.getElementById('comments-' + id);
+      const comments = JSON.parse(localStorage.getItem(key)) || [];
+      container.innerHTML = comments.map(c => '<div class="comment">💬 ' + c + '</div>').join('');
+    }
+
+    showComments(1);
+  </script>
 </body>
 </html>
