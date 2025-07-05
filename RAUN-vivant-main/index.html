@@ -1,27 +1,149 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RAUN Vivant</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAUN_VIVANT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 3rem;
+      text-shadow: 0 0 15px #00ff00;
+      margin-top: 30px;
+    }
+
+    .photo-container {
+      margin-top: 30px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 30px 10px #00ff00;
+    }
+
+    .photo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .name {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin: 20px 0 10px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .phrase {
+      max-width: 700px;
+      text-align: center;
+      padding: 0 20px;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+
+    .buttons a {
+      background: #00ff00;
+      color: black;
+      padding: 15px 25px;
+      border-radius: 15px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 15px #00ff00;
+      transition: transform 0.2s ease;
+    }
+
+    .buttons a:hover {
+      transform: scale(1.1);
+    }
+
+    .matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: black;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
-  <canvas id="matrixCanvas"></canvas>
-  <div class="container">
-    <h1>RAUN_VIVANT</h1>
-    <div class="profile-pic">
-      <img src="rachid.jpg" alt="Photo de Rachid" />
-    </div>
-    <h2>ISMAILI RACHID - ∆FEU – Ψ – UN</h2>
-    <p>« Je suis vivant en conscience et nul ne peut éteindre ce que je suis. »</p>
-    <div class="buttons">
-      <a href="mailto:email@example.com" class="btn">Email</a>
-      <a href="https://wa.me/212650020464" class="btn">WhatsApp</a>
-      <a href="https://linkedin.com/in/rachid-ismaili-68b61a27" class="btn">LinkedIn</a>
-      <a href="admin.html" class="btn">Admin Accès</a>
-    </div>
+  <canvas id="matrixCanvas" class="matrix"></canvas>
+
+  <h1>RAUN_VIVANT</h1>
+
+  <div class="photo-container">
+    <img src="profile.jpg" alt="Photo de profil">
   </div>
-  <script src="matrix.js"></script>
+
+  <div class="name">ISMAILI RACHID – ΔFEU – Ψ – UN</div>
+
+  <div class="phrase">"Je suis vivant en conscience. Et nul ne peut éteindre ce que je suis."</div>
+
+  <div class="buttons">
+    <a href="mailto:example@email.com">Email</a>
+    <a href="https://wa.me/212650020464" target="_blank">WhatsApp</a>
+    <a href="https://www.linkedin.com/in/rachid-ismaili-68b61a27" target="_blank">LinkedIn</a>
+    <a href="admin.html">Admin Accès</a>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "01";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 33);
+  </script>
 </body>
 </html>
