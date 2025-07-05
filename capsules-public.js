@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-
   const capsulesContainer = document.getElementById("capsules");
 
   function afficherCapsules() {
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
         capsulesContainer.innerHTML = "";
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-
           const contenu =
             data.text?.trim() ||
             data.content?.trim() ||
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
             data.alignement?.trim() ||
             data.projection?.trim() ||
             "Contenu vide";
-
           const titre = data.title || "...";
           const count = data.readCount || 0;
 
@@ -43,10 +40,15 @@ document.addEventListener("DOMContentLoaded", function () {
               readCount: firebase.firestore.FieldValue.increment(1)
             }).then(() => {
               localStorage.setItem(key, "1");
-              const countSpan = document.getElementById("read-" + doc.id);
-              if (countSpan) {
-                countSpan.textContent = count + 1;
-              }
+
+              // Mettre à jour l'affichage avec la vraie valeur depuis Firestore
+              db.collection("capsules").doc(doc.id).get().then((updatedDoc) => {
+                const updatedCount = updatedDoc.data().readCount || 0;
+                const countSpan = document.getElementById("read-" + doc.id);
+                if (countSpan) {
+                  countSpan.textContent = updatedCount;
+                }
+              });
             }).catch((error) => {
               console.error("Erreur mise à jour compteur :", error);
             });
