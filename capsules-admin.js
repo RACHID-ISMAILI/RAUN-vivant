@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  document.getElementById("publierBtn").addEventListener("click", function () {
+  document.getElementById("publier-btn").addEventListener("click", function () {
     const text = document.getElementById("capsuleText").value.trim();
     if (!text) {
       alert("Écris une capsule avant de publier.");

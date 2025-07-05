@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Espace Admin RAUN 🔐</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
+    }
+    h2, h3 {
+      color: #00ff00;
+    }
+    textarea, input, button {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      border: 1px solid lime;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
+  <button onclick="logout()">Se déconnecter</button>
+
+  <h3>📝 Écrire une capsule</h3>
+  <textarea id="capsuleText" rows="5" cols="60" placeholder="Écris ta capsule ici..."></textarea><br />
+  <button id="publier-btn">Publier</button>
+
+  <h3>💬 Commentaires récents</h3>
+  <div id="commentaires">Chargement...</div>
+
+  <script src="capsules-admin.js"></script>
+</body>
+</html>
