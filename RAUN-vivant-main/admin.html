@@ -1,79 +1,19 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <title>Accès Admin RAUN</title>
-  <style>
-    body {
-      background: black;
-      color: #00ff00;
-      font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    input {
-      background: black;
-      border: 2px solid #00ff00;
-      color: #00ff00;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-      border-radius: 5px;
-      width: 300px;
-    }
-    button {
-      background: #00ff00;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 5px;
-      font-family: monospace;
-      margin-top: 10px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background: #00cc00;
-    }
-    .btn-return {
-      background: transparent;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 8px 15px;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: monospace;
-      text-decoration: none;
-      display: inline-block;
-      transition: background-color 0.3s;
-    }
-    .btn-return:hover {
-      background: #00ff00;
-      color: black;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-  </style>
+  <link rel="stylesheet" href="css/matrix.css" />
 </head>
 <body>
-  <h1>🔐 Accès Admin</h1>
-
-  <!-- Bouton retour -->
-  <a href="index.html" class="btn-return">← Retour à la page publique</a>
-
-  <input type="email" placeholder="admin@raun.com" id="email" />
-  <input type="password" placeholder="••••••••" id="password" />
-  <button onclick="login()">Se connecter</button>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="admin.js"></script>
+  <div class="matrix-background"></div>
+  <div class="admin-container">
+    <h1>🔐 Accès Admin</h1>
+    <input type="email" placeholder="admin@raun.com" id="email" />
+    <input type="password" placeholder="••••••••" id="password" />
+    <button onclick="login()">Se connecter</button>
+  </div>
+  <script src="js/admin.js"></script>
 </body>
 </html>

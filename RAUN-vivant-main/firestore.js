@@ -1,22 +1,18 @@
 
-const db = firebase.firestore();
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from './firebase.js';
 
-function publierCapsule() {
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.saveCapsule = async () => {
   const text = document.getElementById("capsuleText").value;
-  if (!text.trim()) {
-    alert("Écris une capsule avant de publier.");
-    return;
-  }
-
-  db.collection("capsules").add({
+  if (!text) return alert("Capsule vide !");
+  await addDoc(collection(db, "capsules"), {
     texte: text,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
-    alert("Capsule publiée 🔥");
-    document.getElementById("capsuleText").value = "";
-  })
-  .catch((error) => {
-    alert("Erreur lors de la publication : " + error.message);
+    date: serverTimestamp()
   });
-}
+  alert("🌱 Capsule enregistrée !");
+  document.getElementById("capsuleText").value = "";
+};
