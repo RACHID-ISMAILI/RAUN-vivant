@@ -17,20 +17,28 @@ document.addEventListener("DOMContentLoaded", function () {
         capsulesContainer.innerHTML = "";
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const contenu = data.text || data.content || data.rappel || data.alignement || data.projection || "Contenu vide";
+          const contenu = [
+            data.text,
+            data.content,
+            data.rappel,
+            data.alignement,
+            data.projection
+          ].filter(Boolean).join(" — ") || "Contenu vide";
+
           const titre = data.title || "...";
-          const readCount = data.readCount || 0;
+
+          const count = data.readCount || 0;
 
           const capsule = document.createElement("div");
           capsule.innerHTML = `
             <hr />
             <h3>${titre}</h3>
             <p><span style="color:lime">${contenu}</span></p>
-            <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${readCount}</span></p>
+            <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
           `;
           capsulesContainer.appendChild(capsule);
 
-          const key = "capsule_read_" + doc.id;
+          const key = "read_" + doc.id;
           if (!localStorage.getItem(key)) {
             db.collection("capsules").doc(doc.id).update({
               readCount: firebase.firestore.FieldValue.increment(1)
@@ -38,16 +46,15 @@ document.addEventListener("DOMContentLoaded", function () {
               localStorage.setItem(key, "1");
               const countSpan = document.getElementById("read-" + doc.id);
               if (countSpan) {
-                countSpan.textContent = readCount + 1;
+                countSpan.textContent = count + 1;
               }
             }).catch((error) => {
-              console.error("Erreur lors de l’incrémentation :", error);
+              console.error("Erreur mise à jour compteur :", error);
             });
           }
         });
-      })
-      .catch((error) => {
-        capsulesContainer.innerHTML = "<p style='color:red;'>Erreur : " + error.message + "</p>";
+      }).catch((error) => {
+        capsulesContainer.innerHTML = "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
       });
   }
 
