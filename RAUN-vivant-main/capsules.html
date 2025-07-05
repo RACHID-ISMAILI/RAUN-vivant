@@ -2,36 +2,31 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Capsules RAUN - Publique</title>
+  <title>RAUN Vivant - Capsules</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
-    body { background: black; color: #00ff00; font-family: monospace; padding: 20px; }
-    .capsule { border: 1px solid #00ff00; padding: 10px; margin-bottom: 10px; border-radius: 10px; }
-    .btn-retour {
-      background-color: #00ff00;
-      color: black;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: bold;
-      display: inline-block;
-      margin-bottom: 20px;
-      transition: background-color 0.3s;
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
     }
-    .btn-retour:hover {
-      background-color: #00cc00;
+    h2 {
+      color: cyan;
+    }
+    input, textarea, button {
+      margin-top: 5px;
+      font-family: monospace;
+    }
+    hr {
+      border: 1px solid lime;
     }
   </style>
 </head>
 <body>
-  <h1>Capsules spirituelles RAUN</h1>
-
-  <!-- Bouton retour -->
-  <a href="index.html" class="btn-retour">Retour à la page publique</a>
-
-  <div id="capsulesContainer">Chargement des capsules...</div>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <h2>🧠 Capsules de Conscience</h2>
+  <div id="capsules"></div>
   <script src="capsules-public.js"></script>
 </body>
 </html>
