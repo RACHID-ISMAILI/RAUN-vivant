@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-
   const capsulesContainer = document.getElementById("capsules");
 
   function afficherCapsules() {
@@ -35,16 +34,20 @@ document.addEventListener("DOMContentLoaded", function () {
           `;
           capsulesContainer.appendChild(capsule);
 
-          db.collection("capsules").doc(doc.id).update({
-            readCount: firebase.firestore.FieldValue.increment(1)
-          }).then(() => {
-            const countSpan = document.getElementById("read-" + doc.id);
-            if (countSpan) {
-              countSpan.textContent = count + 1;
-            }
-          }).catch((error) => {
-            console.error("Erreur mise à jour compteur :", error);
-          });
+          const readKey = "read_" + doc.id;
+          if (!localStorage.getItem(readKey)) {
+            db.collection("capsules").doc(doc.id).update({
+              readCount: firebase.firestore.FieldValue.increment(1)
+            }).then(() => {
+              localStorage.setItem(readKey, "1");
+              const countSpan = document.getElementById("read-" + doc.id);
+              if (countSpan) {
+                countSpan.textContent = count + 1;
+              }
+            }).catch((error) => {
+              console.error("Erreur mise à jour compteur :", error);
+            });
+          }
         });
       }).catch((error) => {
         capsulesContainer.innerHTML = "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
