@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Capsules Local</title>
+  <style>
+    body { background-color: black; color: lime; font-family: monospace; padding: 20px; }
+    .capsule { margin-bottom: 30px; }
+    .comment-section { margin-top: 10px; }
+    textarea { width: 100%; height: 50px; background-color: #111; color: lime; border: 1px solid lime; }
+    button { background: none; border: 1px solid lime; color: lime; padding: 5px 10px; cursor: pointer; }
+    .comments-list { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h2>📘 Capsules de Conscience (Mode local)</h2>
+  <div id="capsules">Chargement...</div>
+
+  <script>
+    const capsulesSimulées = [
+      { id: "1", title: "🌿 Éveil", contenu: "La vérité ne s’impose pas, elle s’éveille.", readCount: 0, comments: [] },
+      { id: "2", title: "🌿 Voix du Lean", contenu: "Écouter le client interne, c’est plus qu’un acte de gestion.", readCount: 0, comments: [] },
+      { id: "3", title: "🌿 Terrain vivant", contenu: "Le terrain n’est pas seulement un lieu de production. C’est un miroir.", readCount: 0, comments: [] }
+    ];
+
+    function afficherCapsules() {
+      const container = document.getElementById("capsules");
+      container.innerHTML = "";
+
+      capsulesSimulées.forEach(capsule => {
+        const div = document.createElement("div");
+        div.className = "capsule";
+        div.innerHTML = `
+          <h3>${capsule.title}</h3>
+          <p>${capsule.contenu}</p>
+          <p>👁️ Lectures : <span id="count-${capsule.id}">${capsule.readCount}</span></p>
+          <div class="comment-section">
+            <textarea id="input-${capsule.id}" placeholder="Ton commentaire..."></textarea>
+            <button onclick="ajouterCommentaire('${capsule.id}')">Envoyer</button>
+            <div id="comments-${capsule.id}" class="comments-list"></div>
+          </div>
+          <hr />
+        `;
+        container.appendChild(div);
+
+        // Simuler comptage unique par session
+        const key = "read_" + capsule.id;
+        if (!localStorage.getItem(key)) {
+          capsule.readCount++;
+          localStorage.setItem(key, "1");
+        }
+        document.getElementById("count-" + capsule.id).textContent = capsule.readCount;
+      });
+    }
+
+    function ajouterCommentaire(capsuleId) {
+      const input = document.getElementById("input-" + capsuleId);
+      const commentaire = input.value.trim();
+      if (commentaire) {
+        const list = document.getElementById("comments-" + capsuleId);
+        const p = document.createElement("p");
+        p.textContent = "💬 " + commentaire;
+        list.appendChild(p);
+        input.value = "";
+      }
+    }
+
+    afficherCapsules();
+  </script>
+</body>
+</html>
