@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Publication RAUN</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
+    }
+    textarea, button {
+      font-family: monospace;
+      padding: 10px;
+      width: 100%;
+      max-width: 600px;
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      margin-top: 10px;
+    }
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test Publication RAUN 🔥</h2>
+  <textarea id="capsuleText" rows="6" placeholder="Écris ta capsule ici..."></textarea>
+  <button id="publier-btn">Publier</button>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.getElementById("publier-btn").addEventListener("click", function () {
+      console.log("➡️ Bouton cliqué");
+      const text = document.getElementById("capsuleText").value.trim();
+      if (!text) {
+        alert("⚠️ Écris quelque chose !");
+        return;
+      }
+
+      const title = text.split(" ").slice(0, 5).join(" ") + "...";
+
+      db.collection("capsules").add({
+        title: title,
+        content: text,
+        readCount: 0,
+        comments: [],
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert("✅ Capsule bien publiée !");
+        document.getElementById("capsuleText").value = "";
+      })
+      .catch((error) => {
+        console.error("🔥 Erreur:", error);
+        alert("❌ Erreur : " + error.message);
+      });
+    });
+  </script>
+</body>
+</html>
