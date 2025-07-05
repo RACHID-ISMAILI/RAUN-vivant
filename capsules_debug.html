@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>RAUN Capsules Debug</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
+    }
+    .capsule {
+      border: 1px solid lime;
+      margin: 20px 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>DEBUG Capsules RAUN 🔎</h1>
+  <div id="capsules">Chargement...</div>
+  <pre id="log" style="color: orange;"></pre>
+
+  <script>
+    const log = (msg) => document.getElementById('log').innerText += msg + "\n";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843"
+    };
+
+    log("Initialisation Firebase...");
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function loadCapsules() {
+      const container = document.getElementById("capsules");
+      try {
+        log("Lecture de la collection 'capsules'...");
+        const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
+        log(`Nombre de documents récupérés: ${snapshot.size}`);
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          log("Capsule trouvée: " + JSON.stringify(data));
+          const div = document.createElement("div");
+          div.className = "capsule";
+          div.innerHTML = `<p>${data.text || "Aucun texte trouvé"}</p>`;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        log("❌ Erreur: " + e.message);
+      }
+    }
+
+    loadCapsules();
+  </script>
+</body>
+</html>
