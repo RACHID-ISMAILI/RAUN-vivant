@@ -3,7 +3,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Capsules de Conscience 🧠</title>
+  <title>Capsules RAUN 🧠 Live</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     body {
       background-color: black;
@@ -40,33 +42,47 @@
   </style>
 </head>
 <body>
-  <h1>Capsules de Conscience 🧠</h1>
-
-  <div class="capsule" id="capsule-1">
-    <strong>Capsule #1 :</strong>
-    <p>La vérité ne s’impose pas, elle s’éveille.</p>
-    <div class="comments" id="comments-1"></div>
-    <textarea id="input-1" placeholder="Écris un commentaire..."></textarea>
-    <button onclick="addComment(1)">Commenter</button>
-  </div>
-
-  <div class="capsule" id="capsule-2">
-    <strong>Capsule #2 :</strong>
-    <p>Ceux qui contrôlent l'information contrôlent la conscience collective.</p>
-    <div class="comments" id="comments-2"></div>
-    <textarea id="input-2" placeholder="Écris un commentaire..."></textarea>
-    <button onclick="addComment(2)">Commenter</button>
-  </div>
-
-  <div class="capsule" id="capsule-3">
-    <strong>Capsule #3 :</strong>
-    <p>La peur est le code source du contrôle. Brise-la, et tu es libre.</p>
-    <div class="comments" id="comments-3"></div>
-    <textarea id="input-3" placeholder="Écris un commentaire..."></textarea>
-    <button onclick="addComment(3)">Commenter</button>
-  </div>
+  <h1>Capsules de Conscience 🔥 Live</h1>
+  <div id="capsules">Chargement...</div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function loadCapsules() {
+      const container = document.getElementById("capsules");
+      const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
+      container.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const id = doc.id;
+        const viewsKey = 'views-' + id;
+        let views = parseInt(localStorage.getItem(viewsKey) || "0") + 1;
+        localStorage.setItem(viewsKey, views);
+
+        const capsuleDiv = document.createElement("div");
+        capsuleDiv.className = "capsule";
+        capsuleDiv.innerHTML = `
+          <p>${data.text}</p>
+          <p>👁️ Lectures : ${views}</p>
+          <div class="comments" id="comments-${id}"></div>
+          <textarea id="input-${id}" placeholder="Écris un commentaire..."></textarea>
+          <button onclick="addComment('${id}')">Commenter</button>
+        `;
+        container.appendChild(capsuleDiv);
+        showComments(id);
+      });
+    }
+
     function addComment(id) {
       const input = document.getElementById('input-' + id);
       const text = input.value.trim();
@@ -86,7 +102,7 @@
       container.innerHTML = comments.map(c => '<div class="comment">💬 ' + c + '</div>').join('');
     }
 
-    [1, 2, 3].forEach(showComments);
+    loadCapsules();
   </script>
 </body>
 </html>
