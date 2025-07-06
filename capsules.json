@@ -1,11 +1,21 @@
+
 [
   {
-    "title": "Capsule de Conscience 1",
-    "text": "La lumière intérieure guide chaque pas.",
-    "readCount": 0,
+    "id": "1",
+    "title": "Éveil Intérieur",
+    "text": "Je suis vivant en conscience et nul ne peut éteindre ce que je suis.",
     "votesUp": 0,
     "votesDown": 0,
-    "comments": [],
-    "timestamp": 1700000000000
+    "readCount": 0,
+    "comments": []
+  },
+  {
+    "id": "2",
+    "title": "Silence du Soi",
+    "text": "Dans le silence, je trouve la vérité qui ne parle pas.",
+    "votesUp": 0,
+    "votesDown": 0,
+    "readCount": 0,
+    "comments": []
   }
 ]
