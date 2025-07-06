@@ -3,45 +3,46 @@ document.addEventListener("DOMContentLoaded", function () {
   const firebaseConfig = {
     apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
     authDomain: "raun-network.firebaseapp.com",
-    projectId: "raun-network",
-    storageBucket: "raun-network.appspot.com",
-    messagingSenderId: "541416001018",
-    appId: "1:541416001018:web:ba7efef5aea63a30206843"
+    projectId: "raun-network"
   };
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
   const container = document.getElementById("capsules");
 
-  async function afficherCapsules() {
+  async function loadCapsules() {
     const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
     container.innerHTML = "";
-    snapshot.forEach(doc => {
+    snapshot.forEach(async (doc) => {
       const data = doc.data();
       const id = doc.id;
-      const texte = data.text || "Contenu vide";
-      const votesUp = data.votesUp || 0;
-      const votesDown = data.votesDown || 0;
 
-      const capsule = document.createElement("div");
-      capsule.className = "capsule";
-      capsule.innerHTML = `
-        <p>${texte}</p>
+      // Ajouter votesUp et votesDown si manquants
+      if (data.votesUp === undefined || data.votesDown === undefined) {
+        await db.collection("capsules").doc(id).set({
+          votesUp: data.votesUp || 0,
+          votesDown: data.votesDown || 0
+        }, { merge: true });
+      }
+
+      const capsuleDiv = document.createElement("div");
+      capsuleDiv.className = "capsule";
+      capsuleDiv.innerHTML = `
+        <p>${data.text || "..."}</p>
         <p>
-          <button onclick="voter('${id}', 'votesUp')">👍 <span id="up-${id}">${votesUp}</span></button>
-          <button onclick="voter('${id}', 'votesDown')">👎 <span id="down-${id}">${votesDown}</span></button>
+          <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${data.votesUp || 0}</span></button>
+          <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${data.votesDown || 0}</span></button>
         </p>
         <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea>
-        <button onclick="commenter('${id}')">Commenter</button>
-        <div id="commentaires-${id}" class="commentaires"></div>
+        <button onclick="addComment('${id}')">Commenter</button>
+        <div id="comments-${id}"></div>
       `;
-      container.appendChild(capsule);
-
-      chargerCommentaires(id);
+      container.appendChild(capsuleDiv);
+      loadComments(id);
     });
   }
 
-  function voter(id, type) {
+  window.vote = function (id, type) {
     const key = "voted-" + id;
     if (localStorage.getItem(key)) {
       alert("Tu as déjà voté !");
@@ -54,9 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
       span.textContent = parseInt(span.textContent) + 1;
     });
-  }
+  };
 
-  function commenter(id) {
+  window.addComment = function (id) {
     const textarea = document.getElementById("comment-" + id);
     const message = textarea.value.trim();
     if (!message) return;
@@ -66,12 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
       timestamp: new Date()
     }).then(() => {
       textarea.value = "";
-      chargerCommentaires(id);
+      loadComments(id);
     });
-  }
+  };
 
-  async function chargerCommentaires(id) {
-    const container = document.getElementById("commentaires-" + id);
+  async function loadComments(id) {
+    const container = document.getElementById("comments-" + id);
     const snapshot = await db.collection("commentaires")
       .where("capsuleId", "==", id)
       .orderBy("timestamp", "desc")
@@ -87,5 +88,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  afficherCapsules();
+  loadCapsules();
 });
