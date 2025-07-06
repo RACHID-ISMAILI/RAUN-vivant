@@ -65,22 +65,21 @@
 
     function ajouterCapsule() {
       const title = document.getElementById("title").value.trim();
-      const content = document.getElementById("content").value.trim();
+      const text = document.getElementById("content").value.trim();
       const alignment = document.getElementById("alignment").value.trim();
       const projection = document.getElementById("projection").value.trim();
       const rappel = document.getElementById("rappel").value.trim();
 
-      if (content && title) {
+      if (text && title) {
         db.collection("capsules").add({
           title,
-          content,
+          text,
           alignment,
           projection,
           rappel,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           votesUp: 0,
           votesDown: 0,
-          comments: [],
           readCount: 0
         }).then(() => {
           alert("Capsule ajoutée avec succès");
@@ -89,6 +88,8 @@
           document.getElementById("alignment").value = "";
           document.getElementById("projection").value = "";
           document.getElementById("rappel").value = "";
+        }).catch((error) => {
+          alert("Erreur ajout capsule: " + error.message);
         });
       } else {
         alert("Le titre et le contenu sont requis.");
