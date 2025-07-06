@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Capsules RAUN 🔥</title>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
+    }
+    .capsule {
+      border: 1px solid lime;
+      margin: 20px 0;
+      padding: 10px;
+    }
+    .comment {
+      border-top: 1px dashed #00ff00;
+      margin-top: 10px;
+      padding-top: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 50px;
+      margin-top: 10px;
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+    }
+    button {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      padding: 5px 10px;
+      margin-top: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Capsules de Conscience 🔥 (Test indépendant)</h1>
+  <div id="capsules">Chargement...</div>
+
+  <script>
+    const fakeCapsules = [
+      {
+        id: "capsule1",
+        text: "Rien ne peut éteindre ce que je suis. 🌿",
+      },
+      {
+        id: "capsule2",
+        text: "Le feu intérieur éclaire les mondes invisibles. 🔥",
+      }
+    ];
+
+    function updateVote(id, type) {
+      const key = type + "-" + id;
+      let count = parseInt(localStorage.getItem(key) || "0") + 1;
+      localStorage.setItem(key, count);
+      loadCapsules();
+    }
+
+    function addComment(id) {
+      const input = document.getElementById("input-" + id);
+      const text = input.value.trim();
+      if (!text) return;
+      const key = "comments-" + id;
+      const comments = JSON.parse(localStorage.getItem(key) || "[]");
+      comments.push(text);
+      localStorage.setItem(key, JSON.stringify(comments));
+      input.value = "";
+      loadCapsules();
+    }
+
+    function loadCapsules() {
+      const container = document.getElementById("capsules");
+      container.innerHTML = "";
+      fakeCapsules.forEach(capsule => {
+        const likes = parseInt(localStorage.getItem("likes-" + capsule.id) || "0");
+        const dislikes = parseInt(localStorage.getItem("dislikes-" + capsule.id) || "0");
+        const comments = JSON.parse(localStorage.getItem("comments-" + capsule.id) || "[]");
+
+        const div = document.createElement("div");
+        div.className = "capsule";
+        div.innerHTML = `
+          <p>${capsule.text}</p>
+          <p>
+            <button onclick="updateVote('${capsule.id}', 'likes')">👍 ${likes}</button>
+            <button onclick="updateVote('${capsule.id}', 'dislikes')">👎 ${dislikes}</button>
+          </p>
+          <textarea id="input-${capsule.id}" placeholder="Écris un commentaire..."></textarea>
+          <button onclick="addComment('${capsule.id}')">Commenter</button>
+          <div class="comments">
+            ${comments.map(c => "<div class='comment'>💬 " + c + "</div>").join("")}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCapsules);
+  </script>
+</body>
+</html>
