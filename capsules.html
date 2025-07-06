@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,7 +36,7 @@
 </head>
 <body>
   <h2>Capsules de Conscience 🔥 Live</h2>
-  <div id="capsules"></div>
+  <div id="capsules">Chargement...</div>
 
   <script>
     const firebaseConfig = {
@@ -57,8 +58,8 @@
 
           div.innerHTML = `
             <h3>${data.title || "Sans titre"}</h3>
-            <p>${data.text || data.content || ""}</p>
-            <p>👁 Lectures : ${data.readCount || 0}</p>
+            <p>${data.text || data.content || "..."}</p>
+            <p>👁 Lectures : <span id="read-${doc.id}">${data.readCount || 0}</span></p>
             <button onclick="vote('${doc.id}', 'up')">👍 ${data.votesUp || 0}</button>
             <button onclick="vote('${doc.id}', 'down')">👎 ${data.votesDown || 0}</button>
             <div style="margin-top: 10px">
@@ -66,23 +67,47 @@
               <button onclick="commenter('${doc.id}')">Commenter</button>
             </div>
           `;
+
+          if (data.comments && data.comments.length > 0) {
+            const commentBlock = document.createElement("div");
+            commentBlock.innerHTML = "<h4>Commentaires :</h4>";
+            data.comments.forEach(com => {
+              const p = document.createElement("p");
+              p.textContent = "- " + com;
+              commentBlock.appendChild(p);
+            });
+            div.appendChild(commentBlock);
+          }
+
           container.appendChild(div);
 
-          db.collection("capsules").doc(doc.id).update({
-            readCount: (data.readCount || 0) + 1
-          });
+          const readKey = "read_" + doc.id;
+          if (!localStorage.getItem(readKey)) {
+            db.collection("capsules").doc(doc.id).update({
+              readCount: (data.readCount || 0) + 1
+            }).then(() => {
+              localStorage.setItem(readKey, "1");
+              document.getElementById("read-" + doc.id).textContent = (data.readCount || 0) + 1;
+            });
+          }
         });
       });
     }
 
     function vote(id, type) {
       const capsuleRef = db.collection("capsules").doc(id);
-      capsuleRef.get().then(doc => {
-        if (doc.exists) {
+      db.runTransaction(transaction => {
+        return transaction.get(capsuleRef).then(doc => {
+          if (!doc.exists) return;
           const data = doc.data();
-          const update = type === 'up' ? { votesUp: (data.votesUp || 0) + 1 } : { votesDown: (data.votesDown || 0) + 1 };
-          capsuleRef.update(update);
-        }
+          const update = {};
+          if (type === 'up') {
+            update.votesUp = (data.votesUp || 0) + 1;
+          } else {
+            update.votesDown = (data.votesDown || 0) + 1;
+          }
+          transaction.update(capsuleRef, update);
+        });
       });
     }
 
