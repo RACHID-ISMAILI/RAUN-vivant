@@ -29,11 +29,20 @@
       padding: 10px;
       border: 1px dashed lime;
     }
+    a {
+      color: cyan;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
   <button onclick="logout()">Se déconnecter</button>
+  <p><a onclick="resetPassword()">Mot de passe oublié ?</a></p>
+
+  <h3>🔐 Accès avec phrase secrète RAUN (optionnel)</h3>
+  <input type="text" id="secretPhrase" placeholder="Entre ta phrase secrète"><br>
+  <button onclick="verifySecretPhrase()">Déverrouiller via phrase</button>
 
   <h3>📝 Écrire une capsule</h3>
   <textarea id="capsuleInput" placeholder="Écris ta capsule ici..." rows="5" cols="50"></textarea><br>
@@ -95,6 +104,29 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    function resetPassword() {
+      var email = prompt("Entre ton email pour réinitialiser ton mot de passe :");
+      if (email) {
+        firebase.auth().sendPasswordResetEmail(email)
+          .then(() => {
+            alert("Un email de réinitialisation a été envoyé à " + email);
+          })
+          .catch((error) => {
+            alert("Erreur : " + error.message);
+          });
+      }
+    }
+
+    function verifySecretPhrase() {
+      const phrase = document.getElementById("secretPhrase").value.trim().toLowerCase();
+      const secret = "rien ne peut éteindre ce que je suis";
+      if (phrase === secret.toLowerCase()) {
+        alert("Phrase correcte ! Accès autorisé.");
+      } else {
+        alert("Phrase incorrecte. Essaie encore.");
+      }
     }
 
     loadCommentaires();
