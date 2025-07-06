@@ -23,6 +23,7 @@
       font-family: monospace;
       border: 1px solid lime;
       padding: 5px;
+      margin-top: 5px;
     }
     .comment-block {
       margin-top: 20px;
@@ -47,6 +48,9 @@
   <h3>📝 Écrire une capsule</h3>
   <textarea id="capsuleInput" placeholder="Écris ta capsule ici..." rows="5" cols="50"></textarea><br>
   <button onclick="publishCapsule()">Publier</button>
+
+  <h3>📥 Télécharger toutes mes capsules</h3>
+  <button onclick="downloadCapsules()">📥 Télécharger</button>
 
   <h3>💬 Commentaires récents</h3>
   <div id="commentaires">Chargement...</div>
@@ -77,35 +81,6 @@
       });
     }
 
-    async function publishCapsule() {
-      const text = document.getElementById("capsuleInput").value;
-      if (text.trim() === "") return;
-      await db.collection("capsules").add({
-        text,
-        views: 0,
-        timestamp: new Date()
-      });
-      document.getElementById("capsuleInput").value = "";
-      alert("Capsule publiée !");
-    }
-
-    async function loadCommentaires() {
-      const container = document.getElementById("commentaires");
-      const snapshot = await db.collection("commentaires").orderBy("timestamp", "desc").limit(20).get();
-      container.innerHTML = "";
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.className = "comment-block";
-        div.innerHTML = `
-          <strong>${data.author || "Anonyme"}</strong> : ${data.message}<br>
-          🕒 ${new Date(data.timestamp.toDate()).toLocaleString()}<br>
-          Capsule ID: ${data.capsuleId}
-        `;
-        container.appendChild(div);
-      });
-    }
-
     function resetPassword() {
       var email = prompt("Entre ton email pour réinitialiser ton mot de passe :");
       if (email) {
@@ -127,6 +102,56 @@
       } else {
         alert("Phrase incorrecte. Essaie encore.");
       }
+    }
+
+    async function publishCapsule() {
+      const text = document.getElementById("capsuleInput").value;
+      if (text.trim() === "") return;
+
+      const capsule = {
+        text,
+        views: 0,
+        timestamp: new Date()
+      };
+
+      await db.collection("capsules").add(capsule);
+      saveToLocal(capsule);
+
+      document.getElementById("capsuleInput").value = "";
+      alert("Capsule publiée !");
+    }
+
+    function saveToLocal(capsule) {
+      const localCapsules = JSON.parse(localStorage.getItem("capsules")) || [];
+      localCapsules.push(capsule);
+      localStorage.setItem("capsules", JSON.stringify(localCapsules));
+    }
+
+    async function downloadCapsules() {
+      const snapshot = await db.collection("capsules").orderBy("timestamp", "asc").get();
+      const capsules = snapshot.docs.map(doc => doc.data());
+      const blob = new Blob([JSON.stringify(capsules, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "capsules_raun.json";
+      link.click();
+    }
+
+    async function loadCommentaires() {
+      const container = document.getElementById("commentaires");
+      const snapshot = await db.collection("commentaires").orderBy("timestamp", "desc").limit(20).get();
+      container.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "comment-block";
+        div.innerHTML = `
+          <strong>${data.author || "Anonyme"}</strong> : ${data.message}<br>
+          🕒 ${new Date(data.timestamp.toDate()).toLocaleString()}<br>
+          Capsule ID: ${data.capsuleId}
+        `;
+        container.appendChild(div);
+      });
     }
 
     loadCommentaires();
