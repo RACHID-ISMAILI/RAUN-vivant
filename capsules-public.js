@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
   const firebaseConfig = {
     apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
@@ -24,6 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "Contenu vide";
           const titre = data.title || "...";
           const count = data.readCount || 0;
+          const up = data.votesUp || 0;
+          const down = data.votesDown || 0;
 
           const capsule = document.createElement("div");
           capsule.innerHTML = `
@@ -31,6 +34,10 @@ document.addEventListener("DOMContentLoaded", function () {
             <h3>${titre}</h3>
             <p><span style="color:lime">${contenu}</span></p>
             <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
+            <p>
+              <button onclick="voteCapsule('${doc.id}', 'votesUp')">👍 <span id="up-${doc.id}">${up}</span></button>
+              <button onclick="voteCapsule('${doc.id}', 'votesDown')">👎 <span id="down-${doc.id}">${down}</span></button>
+            </p>
           `;
           capsulesContainer.appendChild(capsule);
 
@@ -41,27 +48,36 @@ document.addEventListener("DOMContentLoaded", function () {
             }).then(() => {
               localStorage.setItem(key, "1");
 
-              // Mettre à jour l'affichage avec la vraie valeur depuis Firestore
               db.collection("capsules").doc(doc.id).get().then((updatedDoc) => {
                 const updatedCount = updatedDoc.data().readCount || 0;
                 const countSpan = document.getElementById("read-" + doc.id);
-                if (countSpan) {
-                  countSpan.textContent = updatedCount;
-                }
+                if (countSpan) countSpan.textContent = updatedCount;
               });
-            }).catch((error) => {
-              console.error("Erreur mise à jour compteur :", error);
             });
           }
         });
       })
       .catch((error) => {
         capsulesContainer.innerHTML =
-          "<p style='color:red;'>Erreur de chargement des capsules : " +
-          error.message +
-          "</p>";
+          "<p style='color:red;'>Erreur de chargement des capsules : " + error.message + "</p>";
       });
   }
+
+  window.voteCapsule = function(id, type) {
+    const key = "voted-" + id;
+    if (localStorage.getItem(key)) {
+      alert("Tu as déjà voté !");
+      return;
+    }
+
+    db.collection("capsules").doc(id).update({
+      [type]: firebase.firestore.FieldValue.increment(1)
+    }).then(() => {
+      localStorage.setItem(key, "1");
+      const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
+      if (span) span.textContent = parseInt(span.textContent) + 1;
+    });
+  };
 
   afficherCapsules();
 });
