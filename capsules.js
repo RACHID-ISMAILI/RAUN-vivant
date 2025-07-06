@@ -1,46 +1,85 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+  authDomain: "raun-network.firebaseapp.com",
+  projectId: "raun-network"
+};
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const firebaseConfig = {
-    apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-    authDomain: "raun-network.firebaseapp.com",
-    projectId: "raun-network"
-  };
+let db;
+
+try {
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  db = firebase.firestore();
+  loadCapsulesFirestore();
+} catch (e) {
+  console.warn("Firebase failed, loading local capsules.json");
+  loadCapsulesLocal();
+}
 
+function loadCapsulesFirestore() {
+  db.collection("capsules").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+    const container = document.getElementById("capsules");
+    container.innerHTML = "";
+    snapshot.forEach(doc => renderCapsule(doc.id, doc.data(), true));
+  }, error => {
+    console.warn("Firestore unavailable, switching to local.");
+    loadCapsulesLocal();
+  });
+}
+
+function loadCapsulesLocal() {
+  fetch("capsules.json").then(res => res.json()).then(data => {
+    const container = document.getElementById("capsules");
+    container.innerHTML = "";
+    data.forEach((capsule, index) => renderCapsule(index, capsule, false));
+  });
+}
+
+function renderCapsule(id, data, online) {
   const container = document.getElementById("capsules");
-  const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
-  container.innerHTML = "";
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const id = doc.id;
-    const text = data.text || "Capsule vide";
-    const up = data.votesUp || 0;
-    const down = data.votesDown || 0;
+  const div = document.createElement("div");
+  div.className = "capsule";
 
-    const div = document.createElement("div");
-    div.className = "capsule";
-    div.innerHTML = `
-      <p>${text}</p>
-      <p>
-        <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${up}</span></button>
-        <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${down}</span></button>
-      </p>
-    `;
-    container.appendChild(div);
-  });
-});
+  div.innerHTML = `
+    <h3>${data.title}</h3>
+    <p>${data.text}</p>
+    <p>👁 Lectures : ${data.readCount}</p>
+    <button onclick="vote('${id}', 'up', ${online})">👍 ${data.votesUp}</button>
+    <button onclick="vote('${id}', 'down', ${online})">👎 ${data.votesDown}</button>
+    <div><textarea id="comment-${id}" placeholder="Votre commentaire..."></textarea>
+    <button onclick="commenter('${id}', ${online})">Commenter</button></div>
+    ${data.comments && data.comments.length ? '<h4>Commentaires :</h4>' + data.comments.map(c => `<p>- ${c}</p>`).join("") : ''}
+  `;
+  container.appendChild(div);
+}
 
-function vote(id, type) {
-  const key = "voted-" + id;
-  if (localStorage.getItem(key)) {
-    alert("Tu as déjà voté !");
-    return;
+function vote(id, type, online) {
+  if (online) {
+    const ref = db.collection("capsules").doc(id);
+    db.runTransaction(tx => {
+      return tx.get(ref).then(doc => {
+        const data = doc.data();
+        const count = (type === "up" ? (data.votesUp || 0) + 1 : (data.votesDown || 0) + 1);
+        const update = type === "up" ? { votesUp: count } : { votesDown: count };
+        tx.update(ref, update);
+      });
+    });
+  } else {
+    alert("Vote enregistré localement (mode hors ligne).");
   }
-  const ref = firebase.firestore().collection("capsules").doc(id);
-  ref.update({ [type]: firebase.firestore.FieldValue.increment(1) }).then(() => {
-    localStorage.setItem(key, "1");
-    const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
-    span.textContent = parseInt(span.textContent) + 1;
-  });
+}
+
+function commenter(id, online) {
+  const val = document.getElementById(`comment-${id}`).value.trim();
+  if (!val) return;
+  if (online) {
+    const ref = db.collection("capsules").doc(id);
+    ref.update({
+      comments: firebase.firestore.FieldValue.arrayUnion(val)
+    }).then(() => {
+      alert("Commentaire ajouté.");
+      document.getElementById(`comment-${id}`).value = "";
+    });
+  } else {
+    alert("Commentaire sauvegardé localement (hors ligne).");
+  }
 }

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -28,17 +27,13 @@
   <h2>Admin RAUN – Ajout de Capsules</h2>
 
   <div id="login">
-    <input type="email" id="email" placeholder="Email admin"><br>
-    <input type="password" id="password" placeholder="Mot de passe"><br>
+    <input type="email" id="email" placeholder="Email admin" /><br />
+    <input type="password" id="password" placeholder="Mot de passe" /><br />
     <button onclick="login()">Connexion Admin</button>
   </div>
 
   <div id="admin-panel" style="display:none">
-    <input type="text" id="title" placeholder="Titre de la capsule"><br>
-    <textarea id="content" rows="4" cols="60" placeholder="Contenu de la capsule"></textarea><br>
-    <textarea id="alignment" rows="2" cols="60" placeholder="Alignement"></textarea><br>
-    <textarea id="projection" rows="2" cols="60" placeholder="Projection"></textarea><br>
-    <textarea id="rappel" rows="2" cols="60" placeholder="Rappel"></textarea><br>
+    <textarea id="capsuleText" rows="6" cols="60" placeholder="Entre ici la capsule de conscience..."></textarea><br />
     <button onclick="ajouterCapsule()">Ajouter Capsule</button>
   </div>
 
@@ -64,35 +59,19 @@
     }
 
     function ajouterCapsule() {
-      const title = document.getElementById("title").value.trim();
-      const text = document.getElementById("content").value.trim();
-      const alignment = document.getElementById("alignment").value.trim();
-      const projection = document.getElementById("projection").value.trim();
-      const rappel = document.getElementById("rappel").value.trim();
-
-      if (text && title) {
+      const text = document.getElementById("capsuleText").value.trim();
+      if (text) {
         db.collection("capsules").add({
-          title,
           text,
-          alignment,
-          projection,
-          rappel,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          timestamp: new Date(),
           votesUp: 0,
           votesDown: 0,
+          comments: [],
           readCount: 0
         }).then(() => {
           alert("Capsule ajoutée avec succès");
-          document.getElementById("title").value = "";
-          document.getElementById("content").value = "";
-          document.getElementById("alignment").value = "";
-          document.getElementById("projection").value = "";
-          document.getElementById("rappel").value = "";
-        }).catch((error) => {
-          alert("Erreur ajout capsule: " + error.message);
+          document.getElementById("capsuleText").value = "";
         });
-      } else {
-        alert("Le titre et le contenu sont requis.");
       }
     }
   </script>
