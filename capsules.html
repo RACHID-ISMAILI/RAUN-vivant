@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Capsules de Conscience 🔥 Live</title>
+  <meta charset="UTF-8">
+  <title>Capsules de Conscience 🔥</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
@@ -12,33 +13,29 @@
       font-family: monospace;
       padding: 20px;
     }
-    h2 {
-      color: lime;
+    .capsule {
+      border: 1px solid lime;
+      padding: 10px;
+      margin: 10px 0;
     }
-    textarea, input, button {
+    button {
       background-color: black;
       color: lime;
       border: 1px solid lime;
-      font-family: monospace;
-      padding: 5px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    textarea {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      width: 100%;
       margin-top: 5px;
     }
-    .capsule {
-      border: 1px solid green;
-      padding: 10px;
-      margin-bottom: 20px;
-    }
-    .vote-button {
-      cursor: pointer;
-      border: 1px solid lime;
-      padding: 5px 10px;
-      margin: 5px;
-      display: inline-block;
-    }
-    .comment {
-      color: white;
-      font-style: italic;
-      margin: 5px 0;
+    .comments {
+      margin-top: 10px;
+      padding: 5px;
+      border-top: 1px dashed lime;
     }
   </style>
 </head>
@@ -55,71 +52,65 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    function afficherCapsules() {
-      db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
+    function renderCapsules() {
+      db.collection("capsules").orderBy("timestamp", "desc").onSnapshot(snapshot => {
         const container = document.getElementById("capsules");
         container.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();
-          const id = doc.id;
-          const content = data.text || data.content || data.rappel || data.projection || "Contenu vide";
-          const votesUp = data.votesUp || 0;
-          const votesDown = data.votesDown || 0;
-          const comments = data.comments || [];
-          const count = data.readCount || 0;
+          const div = document.createElement("div");
+          div.className = "capsule";
 
-          const capsule = document.createElement("div");
-          capsule.className = "capsule";
-          capsule.innerHTML = `
-            <p>${content}</p>
-            <p>👁️ Lectures : ${count}</p>
-            <div>
-              <span class="vote-button" onclick="voter('${id}', 'votesUp')">👍 ${votesUp}</span>
-              <span class="vote-button" onclick="voter('${id}', 'votesDown')">👎 ${votesDown}</span>
-            </div>
-            <div id="comments-${id}">
-              ${comments.map(c => `<p class='comment'>💬 ${c}</p>`).join("")}
-            </div>
-            <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea><br />
-            <button onclick="commenter('${id}')">Commenter</button>
+          const commentsHTML = (data.comments || [])
+            .map(comment => `<p>💬 ${comment}</p>`)
+            .join("");
+
+          div.innerHTML = `
+            <h3>${data.title || "Sans titre"}</h3>
+            <p>${data.text}</p>
+            <p>👁 Lectures : ${data.readCount || 0}</p>
+            <button onclick="vote('${doc.id}', 'up')">👍 ${data.votesUp || 0}</button>
+            <button onclick="vote('${doc.id}', 'down')">👎 ${data.votesDown || 0}</button>
+            <div class="comments">${commentsHTML}</div>
+            <textarea id="comment-${doc.id}" rows="2" placeholder="Laisser un commentaire..."></textarea><br>
+            <button onclick="commenter('${doc.id}')">Commenter</button>
           `;
-          container.appendChild(capsule);
+          container.appendChild(div);
 
-          const key = "read_" + id;
-          if (!localStorage.getItem(key)) {
-            db.collection("capsules").doc(id).update({
-              readCount: firebase.firestore.FieldValue.increment(1)
-            });
-            localStorage.setItem(key, "1");
-          }
+          db.collection("capsules").doc(doc.id).update({
+            readCount: (data.readCount || 0) + 1
+          }).catch(e => console.log("Erreur lecture:", e));
         });
       });
     }
 
-    function voter(id, type) {
-      const key = `vote_${id}_${type}`;
-      if (!localStorage.getItem(key)) {
-        db.collection("capsules").doc(id).update({
-          [type]: firebase.firestore.FieldValue.increment(1)
-        }).then(afficherCapsules);
-        localStorage.setItem(key, "1");
-      }
+    function vote(id, type) {
+      const capsuleRef = db.collection("capsules").doc(id);
+      capsuleRef.get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          const update = type === 'up' ? 
+            { votesUp: (data.votesUp || 0) + 1 } : 
+            { votesDown: (data.votesDown || 0) + 1 };
+          capsuleRef.update(update).catch(e => console.log("Erreur vote:", e));
+        }
+      }).catch(e => console.log("Erreur récupération doc:", e));
     }
 
     function commenter(id) {
-      const textarea = document.getElementById("comment-" + id);
-      const text = textarea.value.trim();
-      if (text) {
-        db.collection("capsules").doc(id).update({
-          comments: firebase.firestore.FieldValue.arrayUnion(text)
+      const input = document.getElementById(`comment-${id}`);
+      const commentaire = input.value.trim();
+      if (commentaire) {
+        const capsuleRef = db.collection("capsules").doc(id);
+        capsuleRef.update({
+          comments: firebase.firestore.FieldValue.arrayUnion(commentaire)
         }).then(() => {
-          textarea.value = "";
-          afficherCapsules();
-        });
+          input.value = "";
+        }).catch(e => console.log("Erreur ajout commentaire:", e));
       }
     }
 
-    afficherCapsules();
+    renderCapsules();
   </script>
 </body>
 </html>
