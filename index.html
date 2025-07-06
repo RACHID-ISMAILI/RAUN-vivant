@@ -1,49 +1,120 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>RAUN Vivant</title>
-  <link rel="icon" href="favicon.ico" />
+  <meta charset="UTF-8">
+  <title>Capsules de Conscience 🔥</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     body {
       background-color: black;
       color: lime;
       font-family: monospace;
-      text-align: center;
-      margin: 0;
       padding: 20px;
     }
-    a {
-      color: cyan;
-      text-decoration: underline;
-      display: block;
-      margin: 10px;
-      font-size: 1.3em;
+    .capsule {
+      border: 1px solid lime;
+      padding: 10px;
+      margin: 10px 0;
     }
-    img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid lime;
-      animation: glow 1.5s infinite alternate;
+    button {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      cursor: pointer;
+      margin-right: 5px;
     }
-    @keyframes glow {
-      from { box-shadow: 0 0 5px lime; }
-      to { box-shadow: 0 0 20px lime; }
-    }
-    .badge {
-      margin-bottom: 10px;
+    textarea {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      width: 100%;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
-  <div class="badge">
-    <img src="photo.jpg" alt="Photo de profil" /><br />
-    <span style="color: lime; font-size: 0.9em;">Photo de profil</span>
-  </div>
-  <h1>RAUN Vivant</h1>
-  <a href="capsules.html">🧠 Voir les Capsules</a>
-  <a href="admin.html">🔐 Espace Admin</a>
-  <a href="https://github.com/RACHID-ISMAILI/RAUN-vivant" target="_blank">📁 Dépôt GitHub</a>
+  <h2>Capsules de Conscience 🔥</h2>
+  <div id="capsules"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function renderCapsules() {
+      db.collection("capsules").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+        const container = document.getElementById("capsules");
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "capsule";
+
+          div.innerHTML = `
+            <h3>${data.titre || "Sans titre"}</h3>
+            <p>${data.content || data.text || ""}</p>
+            <p>👁 Lectures : ${data.readCount || 0}</p>
+            <button onclick="vote('${doc.id}', 'up')">👍 ${data.votesUp || 0}</button>
+            <button onclick="vote('${doc.id}', 'down')">👎 ${data.votesDown || 0}</button>
+            <div style="margin-top: 10px">
+              <textarea id="comment-${doc.id}" rows="2" placeholder="Laisser un commentaire..."></textarea><br>
+              <button onclick="commenter('${doc.id}')">Commenter</button>
+            </div>
+          `;
+
+          if (data.comments && data.comments.length > 0) {
+            const commentBlock = document.createElement("div");
+            commentBlock.innerHTML = "<h4>Commentaires :</h4>";
+            data.comments.forEach(com => {
+              const p = document.createElement("p");
+              p.textContent = "- " + com;
+              commentBlock.appendChild(p);
+            });
+            div.appendChild(commentBlock);
+          }
+
+          container.appendChild(div);
+
+          db.collection("capsules").doc(doc.id).update({
+            readCount: (data.readCount || 0) + 1
+          }).catch(error => {
+            console.error("Erreur mise à jour readCount:", error);
+          });
+        });
+      });
+    }
+
+    function vote(id, type) {
+      const capsuleRef = db.collection("capsules").doc(id);
+      db.runTransaction(transaction => {
+        return transaction.get(capsuleRef).then(doc => {
+          if (!doc.exists) return;
+          const data = doc.data();
+          const newCount = (type === 'up') ? (data.votesUp || 0) + 1 : (data.votesDown || 0) + 1;
+          const update = (type === 'up') ? { votesUp: newCount } : { votesDown: newCount };
+          transaction.update(capsuleRef, update);
+        });
+      });
+    }
+
+    function commenter(id) {
+      const commentaire = document.getElementById(`comment-${id}`).value.trim();
+      if (commentaire) {
+        const capsuleRef = db.collection("capsules").doc(id);
+        capsuleRef.update({
+          comments: firebase.firestore.FieldValue.arrayUnion(commentaire)
+        }).then(() => {
+          document.getElementById(`comment-${id}`).value = "";
+        });
+      }
+    }
+
+    renderCapsules();
+  </script>
 </body>
 </html>
