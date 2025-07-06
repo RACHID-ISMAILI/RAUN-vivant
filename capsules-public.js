@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "Contenu vide";
           const titre = data.title || "...";
           const count = data.readCount || 0;
-          const up = data.votesUp || 0;
-          const down = data.votesDown || 0;
+          const votesUp = data.votesUp || 0;
+          const votesDown = data.votesDown || 0;
 
           const capsule = document.createElement("div");
           capsule.innerHTML = `
@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
             <p><span style="color:lime">${contenu}</span></p>
             <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
             <p>
-              <button onclick="voteCapsule('${doc.id}', 'votesUp')">👍 <span id="up-${doc.id}">${up}</span></button>
-              <button onclick="voteCapsule('${doc.id}', 'votesDown')">👎 <span id="down-${doc.id}">${down}</span></button>
+              <button onclick="voter('${doc.id}', 'votesUp')">👍 <span id="up-${doc.id}">${votesUp}</span></button>
+              <button onclick="voter('${doc.id}', 'votesDown')">👎 <span id="down-${doc.id}">${votesDown}</span></button>
             </p>
           `;
           capsulesContainer.appendChild(capsule);
@@ -47,12 +47,13 @@ document.addEventListener("DOMContentLoaded", function () {
               readCount: firebase.firestore.FieldValue.increment(1)
             }).then(() => {
               localStorage.setItem(key, "1");
-
               db.collection("capsules").doc(doc.id).get().then((updatedDoc) => {
                 const updatedCount = updatedDoc.data().readCount || 0;
                 const countSpan = document.getElementById("read-" + doc.id);
                 if (countSpan) countSpan.textContent = updatedCount;
               });
+            }).catch((error) => {
+              console.error("Erreur mise à jour compteur :", error);
             });
           }
         });
@@ -63,9 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  window.voteCapsule = function(id, type) {
-    const key = "voted-" + id;
-    if (localStorage.getItem(key)) {
+  window.voter = function (id, type) {
+    const voteKey = "voted_" + id;
+    if (localStorage.getItem(voteKey)) {
       alert("Tu as déjà voté !");
       return;
     }
@@ -73,9 +74,12 @@ document.addEventListener("DOMContentLoaded", function () {
     db.collection("capsules").doc(id).update({
       [type]: firebase.firestore.FieldValue.increment(1)
     }).then(() => {
-      localStorage.setItem(key, "1");
-      const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
+      localStorage.setItem(voteKey, "1");
+      const spanId = type === "votesUp" ? "up-" + id : "down-" + id;
+      const span = document.getElementById(spanId);
       if (span) span.textContent = parseInt(span.textContent) + 1;
+    }).catch((error) => {
+      console.error("Erreur de vote :", error);
     });
   };
 
