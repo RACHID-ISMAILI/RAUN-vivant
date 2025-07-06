@@ -1,46 +1,47 @@
 
-const firebaseConfig = {
+var firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network"
+  projectId: "raun-network",
+  storageBucket: "raun-network.firebasestorage.app",
+  messagingSenderId: "541416001018",
+  appId: "1:541416001018:web:ba7efef5aea63a30206843",
+  measurementId: "G-FMMND6R3N9"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
 
-auth.onAuthStateChanged(user => {
-  const zone = document.getElementById("adminZone");
-  if (!user) {
-    const email = prompt("Email :");
-    const pass = prompt("Mot de passe :");
-    auth.signInWithEmailAndPassword(email, pass).catch(err => {
-      zone.innerHTML = "Erreur : " + err.message;
-    });
+firebase.auth().onAuthStateChanged(function(user) {
+  console.log("Auth state changed, user:", user);
+  if (user) {
+    if (!window.location.href.includes("secret.html")) {
+      console.log("User connecté, redirection vers secret.html");
+      window.location.href = "secret.html";
+    } else {
+      console.log("Déjà sur secret.html, pas de redirection");
+    }
   } else {
-    zone.innerHTML = `
-      <textarea id="capsule" rows="5" cols="60" placeholder="Écris ici..."></textarea><br>
-      <button onclick="saveCapsule()">📤 Publier</button>
-      <button onclick="logout()">🔓 Déconnexion</button>
-    `;
+    if (window.location.href.includes("secret.html")) {
+      console.log("User non connecté sur secret.html, redirection vers admin.html");
+      window.location.href = "admin.html";
+    }
   }
 });
 
-function saveCapsule() {
-  const text = document.getElementById("capsule").value.trim();
-  if (text === "") return;
-  db.collection("capsules").add({
-    text: text,
-    timestamp: new Date(),
-    votesUp: 0,
-    votesDown: 0
-  }).then(() => {
-    alert("Capsule publiée !");
-    document.getElementById("capsule").value = "";
-  });
+function login() {
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .catch(function(error) {
+      alert("Erreur de connexion : " + error.message);
+    });
 }
 
 function logout() {
-  firebase.auth().signOut().then(() => {
-    location.reload();
+  firebase.auth().signOut().then(function() {
+    alert("Déconnecté avec succès");
+    window.location.href = "index.html";
+  }).catch(function(error) {
+    alert("Erreur lors de la déconnexion : " + error.message);
   });
 }
