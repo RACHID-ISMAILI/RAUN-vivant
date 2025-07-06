@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
   const firebaseConfig = {
     apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
@@ -8,42 +7,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-  const container = document.getElementById("capsules");
+  const capsulesContainer = document.getElementById("capsules");
 
-  async function loadCapsules() {
-    const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
-    container.innerHTML = "";
-    snapshot.forEach(async (doc) => {
-      const data = doc.data();
-      const id = doc.id;
+  function afficherCapsules() {
+    db.collection("capsules").orderBy("timestamp", "desc").get()
+      .then((querySnapshot) => {
+        capsulesContainer.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const contenu =
+            data.text?.trim() ||
+            data.content?.trim() ||
+            data.rappel?.trim() ||
+            data.alignement?.trim() ||
+            data.projection?.trim() ||
+            "Contenu vide";
+          const titre = data.title || "...";
+          const count = data.readCount || 0;
+          const votesUp = data.votesUp || 0;
+          const votesDown = data.votesDown || 0;
 
-      // Ajouter votesUp et votesDown si manquants
-      if (data.votesUp === undefined || data.votesDown === undefined) {
-        await db.collection("capsules").doc(id).set({
-          votesUp: data.votesUp || 0,
-          votesDown: data.votesDown || 0
-        }, { merge: true });
-      }
+          const capsule = document.createElement("div");
+          capsule.className = "capsule";
+          capsule.innerHTML = `
+            <h3>${titre}</h3>
+            <p><span style="color:lime">${contenu}</span></p>
+            <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
+            <p>
+              <button onclick="vote('${doc.id}', 'votesUp')">👍 <span id="up-${doc.id}">${votesUp}</span></button>
+              <button onclick="vote('${doc.id}', 'votesDown')">👎 <span id="down-${doc.id}">${votesDown}</span></button>
+            </p>
+          `;
+          capsulesContainer.appendChild(capsule);
 
-      const capsuleDiv = document.createElement("div");
-      capsuleDiv.className = "capsule";
-      capsuleDiv.innerHTML = `
-        <p>${data.text || "..."}</p>
-        <p>
-          <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${data.votesUp || 0}</span></button>
-          <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${data.votesDown || 0}</span></button>
-        </p>
-        <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea>
-        <button onclick="addComment('${id}')">Commenter</button>
-        <div id="comments-${id}"></div>
-      `;
-      container.appendChild(capsuleDiv);
-      loadComments(id);
-    });
+          const key = "read_" + doc.id;
+          if (!localStorage.getItem(key)) {
+            db.collection("capsules").doc(doc.id).update({
+              readCount: firebase.firestore.FieldValue.increment(1)
+            }).then(() => {
+              localStorage.setItem(key, "1");
+              db.collection("capsules").doc(doc.id).get().then((updatedDoc) => {
+                const updatedCount = updatedDoc.data().readCount || 0;
+                const countSpan = document.getElementById("read-" + doc.id);
+                if (countSpan) {
+                  countSpan.textContent = updatedCount;
+                }
+              });
+            }).catch((error) => {
+              console.error("Erreur mise à jour compteur :", error);
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        capsulesContainer.innerHTML =
+          "<p style='color:red;'>Erreur de chargement des capsules : " +
+          error.message +
+          "</p>";
+      });
   }
 
   window.vote = function (id, type) {
-    const key = "voted-" + id;
+    const key = "voted_" + id;
     if (localStorage.getItem(key)) {
       alert("Tu as déjà voté !");
       return;
@@ -53,40 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }).then(() => {
       localStorage.setItem(key, "1");
       const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
-      span.textContent = parseInt(span.textContent) + 1;
+      if (span) span.textContent = parseInt(span.textContent) + 1;
     });
   };
 
-  window.addComment = function (id) {
-    const textarea = document.getElementById("comment-" + id);
-    const message = textarea.value.trim();
-    if (!message) return;
-    db.collection("commentaires").add({
-      capsuleId: id,
-      message: message,
-      timestamp: new Date()
-    }).then(() => {
-      textarea.value = "";
-      loadComments(id);
-    });
-  };
-
-  async function loadComments(id) {
-    const container = document.getElementById("comments-" + id);
-    const snapshot = await db.collection("commentaires")
-      .where("capsuleId", "==", id)
-      .orderBy("timestamp", "desc")
-      .limit(5)
-      .get();
-    container.innerHTML = "";
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.textContent = "💬 " + data.message;
-      container.appendChild(div);
-    });
-  }
-
-  loadCapsules();
+  afficherCapsules();
 });
