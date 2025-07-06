@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function afficherCapsules() {
     const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
     container.innerHTML = "";
+
     snapshot.forEach(doc => {
       const data = doc.data();
       const id = doc.id;
@@ -26,12 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const capsule = document.createElement("div");
       capsule.className = "capsule";
       capsule.innerHTML = `
-        <p>${texte}</p>
+        <h3 style="color:cyan;">Capsule 🔥</h3>
+        <p style="color:lime;">${texte}</p>
         <p>
-          <button onclick="voter('${id}', 'votesUp')">👍 <span id="up-${id}">${votesUp}</span></button>
-          <button onclick="voter('${id}', 'votesDown')">👎 <span id="down-${id}">${votesDown}</span></button>
+          <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${votesUp}</span></button>
+          <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${votesDown}</span></button>
         </p>
-        <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea>
+        <textarea id="comment-${id}" placeholder="💬 Laisse ton commentaire ici..."></textarea>
         <button onclick="commenter('${id}')">Commenter</button>
         <div id="commentaires-${id}" class="commentaires"></div>
       `;
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  function voter(id, type) {
+  function vote(id, type) {
     const key = "voted-" + id;
     if (localStorage.getItem(key)) {
       alert("Tu as déjà voté !");
@@ -77,12 +79,14 @@ document.addEventListener("DOMContentLoaded", function () {
       .orderBy("timestamp", "desc")
       .limit(5)
       .get();
-    container.innerHTML = "";
+    container.innerHTML = "<h4 style='color:#00ff00;'>Commentaires :</h4>";
     snapshot.forEach(doc => {
       const data = doc.data();
       const div = document.createElement("div");
-      div.className = "comment";
-      div.textContent = "💬 " + data.message;
+      div.innerHTML = "💬 " + data.message;
+      div.style.borderTop = "1px dashed #00ff00";
+      div.style.marginTop = "5px";
+      div.style.paddingTop = "5px";
       container.appendChild(div);
     });
   }

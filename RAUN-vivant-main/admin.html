@@ -23,21 +23,34 @@
       font-family: monospace;
       border: 1px solid lime;
       padding: 5px;
+      margin-top: 5px;
     }
     .comment-block {
       margin-top: 20px;
       padding: 10px;
       border: 1px dashed lime;
     }
+    a {
+      color: cyan;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
   <button onclick="logout()">Se déconnecter</button>
+  <p><a onclick="resetPassword()">Mot de passe oublié ?</a></p>
+
+  <h3>🔐 Accès avec phrase secrète RAUN (optionnel)</h3>
+  <input type="text" id="secretPhrase" placeholder="Entre ta phrase secrète"><br>
+  <button onclick="verifySecretPhrase()">Déverrouiller via phrase</button>
 
   <h3>📝 Écrire une capsule</h3>
   <textarea id="capsuleInput" placeholder="Écris ta capsule ici..." rows="5" cols="50"></textarea><br>
   <button onclick="publishCapsule()">Publier</button>
+
+  <h3>📥 Télécharger toutes mes capsules</h3>
+  <button onclick="downloadCapsules()">📥 Télécharger</button>
 
   <h3>💬 Commentaires récents</h3>
   <div id="commentaires">Chargement...</div>
@@ -56,22 +69,72 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
+
     function logout() {
       auth.signOut().then(() => {
         window.location.href = "index.html";
       });
     }
 
+    function resetPassword() {
+      var email = prompt("Entre ton email pour réinitialiser ton mot de passe :");
+      if (email) {
+        firebase.auth().sendPasswordResetEmail(email)
+          .then(() => {
+            alert("Un email de réinitialisation a été envoyé à " + email);
+          })
+          .catch((error) => {
+            alert("Erreur : " + error.message);
+          });
+      }
+    }
+
+    function verifySecretPhrase() {
+      const phrase = document.getElementById("secretPhrase").value.trim().toLowerCase();
+      const secret = "rien ne peut éteindre ce que je suis";
+      if (phrase === secret.toLowerCase()) {
+        alert("Phrase correcte ! Accès autorisé.");
+      } else {
+        alert("Phrase incorrecte. Essaie encore.");
+      }
+    }
+
     async function publishCapsule() {
       const text = document.getElementById("capsuleInput").value;
       if (text.trim() === "") return;
-      await db.collection("capsules").add({
+
+      const capsule = {
         text,
         views: 0,
         timestamp: new Date()
-      });
+      };
+
+      await db.collection("capsules").add(capsule);
+      saveToLocal(capsule);
+
       document.getElementById("capsuleInput").value = "";
       alert("Capsule publiée !");
+    }
+
+    function saveToLocal(capsule) {
+      const localCapsules = JSON.parse(localStorage.getItem("capsules")) || [];
+      localCapsules.push(capsule);
+      localStorage.setItem("capsules", JSON.stringify(localCapsules));
+    }
+
+    async function downloadCapsules() {
+      const snapshot = await db.collection("capsules").orderBy("timestamp", "asc").get();
+      const capsules = snapshot.docs.map(doc => doc.data());
+      const blob = new Blob([JSON.stringify(capsules, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "capsules_raun.json";
+      link.click();
     }
 
     async function loadCommentaires() {
