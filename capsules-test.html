@@ -3,7 +3,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Test Capsules RAUN 🔥</title>
+  <title>Test Capsules RAUN - Votes & Commentaires</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     body {
       background-color: black;
@@ -13,94 +15,123 @@
     }
     .capsule {
       border: 1px solid lime;
-      margin: 20px 0;
+      margin-bottom: 20px;
       padding: 10px;
-    }
-    .comment {
-      border-top: 1px dashed #00ff00;
-      margin-top: 10px;
-      padding-top: 10px;
-    }
-    textarea {
-      width: 100%;
-      height: 50px;
-      margin-top: 10px;
-      background-color: black;
-      color: lime;
-      border: 1px solid lime;
     }
     button {
       background-color: black;
       color: lime;
       border: 1px solid lime;
-      padding: 5px 10px;
-      margin-top: 5px;
       cursor: pointer;
+      padding: 5px 10px;
+      margin-right: 10px;
+    }
+    textarea {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .comment {
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px dashed lime;
     }
   </style>
 </head>
 <body>
-  <h1>Capsules de Conscience 🔥 (Test indépendant)</h1>
+  <h1>🧪 Test Capsules RAUN - Votes 👍👎 et Commentaires</h1>
   <div id="capsules">Chargement...</div>
 
   <script>
-    const fakeCapsules = [
-      {
-        id: "capsule1",
-        text: "Rien ne peut éteindre ce que je suis. 🌿",
-      },
-      {
-        id: "capsule2",
-        text: "Le feu intérieur éclaire les mondes invisibles. 🔥",
-      }
-    ];
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843"
+    };
 
-    function updateVote(id, type) {
-      const key = type + "-" + id;
-      let count = parseInt(localStorage.getItem(key) || "0") + 1;
-      localStorage.setItem(key, count);
-      loadCapsules();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function loadCapsules() {
+      const container = document.getElementById("capsules");
+      const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
+      container.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const id = doc.id;
+        const votesUp = data.votesUp || 0;
+        const votesDown = data.votesDown || 0;
+        const texte = data.text || "Capsule vide";
+
+        const capsuleDiv = document.createElement("div");
+        capsuleDiv.className = "capsule";
+        capsuleDiv.innerHTML = `
+          <p>${texte}</p>
+          <p>
+            <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${votesUp}</span></button>
+            <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${votesDown}</span></button>
+          </p>
+          <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea>
+          <button onclick="addComment('${id}')">Commenter</button>
+          <div id="comments-${id}"></div>
+        `;
+        container.appendChild(capsuleDiv);
+        loadComments(id);
+      });
+    }
+
+    function vote(id, type) {
+      const key = "voted-" + id;
+      if (localStorage.getItem(key)) {
+        alert("Tu as déjà voté !");
+        return;
+      }
+      db.collection("capsules").doc(id).update({
+        [type]: firebase.firestore.FieldValue.increment(1)
+      }).then(() => {
+        localStorage.setItem(key, "1");
+        const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
+        span.textContent = parseInt(span.textContent) + 1;
+      });
     }
 
     function addComment(id) {
-      const input = document.getElementById("input-" + id);
-      const text = input.value.trim();
-      if (!text) return;
-      const key = "comments-" + id;
-      const comments = JSON.parse(localStorage.getItem(key) || "[]");
-      comments.push(text);
-      localStorage.setItem(key, JSON.stringify(comments));
-      input.value = "";
-      loadCapsules();
+      const textarea = document.getElementById("comment-" + id);
+      const message = textarea.value.trim();
+      if (!message) return;
+      db.collection("commentaires").add({
+        capsuleId: id,
+        message: message,
+        timestamp: new Date()
+      }).then(() => {
+        textarea.value = "";
+        loadComments(id);
+      });
     }
 
-    function loadCapsules() {
-      const container = document.getElementById("capsules");
+    async function loadComments(id) {
+      const container = document.getElementById("comments-" + id);
+      const snapshot = await db.collection("commentaires")
+        .where("capsuleId", "==", id)
+        .orderBy("timestamp", "desc")
+        .limit(5)
+        .get();
       container.innerHTML = "";
-      fakeCapsules.forEach(capsule => {
-        const likes = parseInt(localStorage.getItem("likes-" + capsule.id) || "0");
-        const dislikes = parseInt(localStorage.getItem("dislikes-" + capsule.id) || "0");
-        const comments = JSON.parse(localStorage.getItem("comments-" + capsule.id) || "[]");
-
+      snapshot.forEach(doc => {
+        const data = doc.data();
         const div = document.createElement("div");
-        div.className = "capsule";
-        div.innerHTML = `
-          <p>${capsule.text}</p>
-          <p>
-            <button onclick="updateVote('${capsule.id}', 'likes')">👍 ${likes}</button>
-            <button onclick="updateVote('${capsule.id}', 'dislikes')">👎 ${dislikes}</button>
-          </p>
-          <textarea id="input-${capsule.id}" placeholder="Écris un commentaire..."></textarea>
-          <button onclick="addComment('${capsule.id}')">Commenter</button>
-          <div class="comments">
-            ${comments.map(c => "<div class='comment'>💬 " + c + "</div>").join("")}
-          </div>
-        `;
+        div.className = "comment";
+        div.textContent = "💬 " + data.message;
         container.appendChild(div);
       });
     }
 
-    document.addEventListener("DOMContentLoaded", loadCapsules);
+    loadCapsules();
   </script>
 </body>
 </html>
