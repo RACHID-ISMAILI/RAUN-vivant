@@ -4,47 +4,72 @@
 <head>
   <meta charset="UTF-8" />
   <title>Connexion RAUN</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843",
+      measurementId: "G-FMMND6R3N9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "capsules.html";
+      } catch (error) {
+        alert("Erreur : " + error.message);
+      }
+    };
+  </script>
   <style>
     body {
       background-color: black;
       color: lime;
       font-family: monospace;
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
-    input, button {
+    input {
+      padding: 10px;
+      margin: 5px;
+      font-size: 1em;
       background-color: black;
       color: lime;
       border: 1px solid lime;
-      padding: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: lime;
+      color: black;
+      border: none;
+      cursor: pointer;
       margin-top: 10px;
+    }
+    h2 {
+      color: cyan;
     }
   </style>
 </head>
 <body>
-  <h2>🔐 Connexion à l’espace RAUN</h2>
-  <input id="email" type="email" placeholder="Email" /><br>
-  <input id="password" type="password" placeholder="Mot de passe" /><br>
+  <h2>🔐 Connexion à RAUN</h2>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Mot de passe" required />
   <button onclick="login()">Se connecter</button>
-  <button onclick="window.location.href='index.html'">Retour à la page publique</button>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-      authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => window.location.href = "admin.html")
-        .catch(error => alert("Erreur : " + error.message));
-    }
-  </script>
 </body>
 </html>
