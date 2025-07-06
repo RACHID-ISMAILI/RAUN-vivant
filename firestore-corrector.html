@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Correction Firestore - Capsules RAUN</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body style="background:black; color:lime; font-family:monospace;">
+  <h2>Correction automatique Firestore RAUN</h2>
+  <p>Ouvre la console pour suivre les corrections.</p>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    db.collection("capsules").get().then(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const updateData = {};
+        if (data.votesUp === undefined) updateData.votesUp = 0;
+        if (data.votesDown === undefined) updateData.votesDown = 0;
+        if (!data.timestamp) updateData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+
+        if (Object.keys(updateData).length > 0) {
+          db.collection("capsules").doc(doc.id).update(updateData)
+            .then(() => console.log("✅ Document corrigé:", doc.id))
+            .catch(error => console.error("❌ Erreur sur", doc.id, error));
+        } else {
+          console.log("✔️ Document déjà complet:", doc.id);
+        }
+      });
+    }).catch(error => console.error("Erreur de chargement :", error));
+  </script>
+</body>
+</html>
