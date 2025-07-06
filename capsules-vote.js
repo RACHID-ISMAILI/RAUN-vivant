@@ -15,45 +15,59 @@ document.addEventListener("DOMContentLoaded", function () {
         capsulesContainer.innerHTML = "";
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const texte = data.text || "Capsule vide";
-          const id = doc.id;
+          const contenu =
+            data.text?.trim() ||
+            data.content?.trim() ||
+            data.rappel?.trim() ||
+            data.alignement?.trim() ||
+            data.projection?.trim() ||
+            "Contenu vide";
+          const titre = data.title || "...";
+          const count = data.readCount || 0;
           const votesUp = data.votesUp || 0;
           const votesDown = data.votesDown || 0;
-          const readCount = data.readCount || 0;
 
           const capsule = document.createElement("div");
           capsule.className = "capsule";
           capsule.innerHTML = `
-            <p>${texte}</p>
-            <p>👁️ Lectures : ${readCount}</p>
+            <h3>${titre}</h3>
+            <p><span style="color:lime">${contenu}</span></p>
+            <p>👁️ <strong>Lectures</strong> : <span id="read-${doc.id}">${count}</span></p>
             <p>
-              <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${votesUp}</span></button>
-              <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${votesDown}</span></button>
+              <button onclick="vote('${doc.id}', 'votesUp')">👍 <span id="up-${doc.id}">${votesUp}</span></button>
+              <button onclick="vote('${doc.id}', 'votesDown')">👎 <span id="down-${doc.id}">${votesDown}</span></button>
             </p>
-            <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea>
-            <button onclick="addComment('${id}')">Commenter</button>
-            <div id="comments-${id}"></div>
           `;
           capsulesContainer.appendChild(capsule);
-          loadComments(id);
 
-          const key = "read_" + id;
+          const key = "read_" + doc.id;
           if (!localStorage.getItem(key)) {
-            db.collection("capsules").doc(id).update({
+            db.collection("capsules").doc(doc.id).update({
               readCount: firebase.firestore.FieldValue.increment(1)
             }).then(() => {
               localStorage.setItem(key, "1");
+              db.collection("capsules").doc(doc.id).get().then((updatedDoc) => {
+                const updatedCount = updatedDoc.data().readCount || 0;
+                const countSpan = document.getElementById("read-" + doc.id);
+                if (countSpan) {
+                  countSpan.textContent = updatedCount;
+                }
+              });
+            }).catch((error) => {
+              console.error("Erreur mise à jour compteur :", error);
             });
           }
         });
       })
       .catch((error) => {
         capsulesContainer.innerHTML =
-          "<p style='color:red;'>Erreur de chargement : " + error.message + "</p>";
+          "<p style='color:red;'>Erreur de chargement des capsules : " +
+          error.message +
+          "</p>";
       });
   }
 
-  window.vote = function(id, type) {
+  window.vote = function (id, type) {
     const key = "voted_" + id;
     if (localStorage.getItem(key)) {
       alert("Tu as déjà voté !");
@@ -64,40 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }).then(() => {
       localStorage.setItem(key, "1");
       const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
-      span.textContent = parseInt(span.textContent) + 1;
+      if (span) span.textContent = parseInt(span.textContent) + 1;
     });
   };
-
-  window.addComment = function(id) {
-    const textarea = document.getElementById("comment-" + id);
-    const message = textarea.value.trim();
-    if (!message) return;
-    db.collection("commentaires").add({
-      capsuleId: id,
-      message: message,
-      timestamp: new Date()
-    }).then(() => {
-      textarea.value = "";
-      loadComments(id);
-    });
-  };
-
-  async function loadComments(id) {
-    const container = document.getElementById("comments-" + id);
-    const snapshot = await db.collection("commentaires")
-      .where("capsuleId", "==", id)
-      .orderBy("timestamp", "desc")
-      .limit(5)
-      .get();
-    container.innerHTML = "";
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.textContent = "💬 " + data.message;
-      container.appendChild(div);
-    });
-  }
 
   afficherCapsules();
 });

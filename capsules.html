@@ -1,12 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Capsules de Conscience</title>
+  <title>Capsules RAUN - Votes</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="capsules-public.js" defer></script>
   <style>
     body {
       background-color: black;
@@ -14,13 +12,36 @@
       font-family: monospace;
       padding: 20px;
     }
-    h2 { color: magenta; }
-    textarea, input { width: 100%; margin-top: 10px; }
-    button { margin-top: 5px; padding: 5px 10px; }
+    .capsule {
+      border: 1px solid lime;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+    button {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      cursor: pointer;
+      padding: 5px 10px;
+      margin-right: 10px;
+    }
+    textarea {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .comment {
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px dashed lime;
+    }
   </style>
 </head>
 <body>
-  <h2>💭 Capsules de Conscience</h2>
-  <div id="capsules"></div>
+  <h1>🔥 Capsules de Conscience avec Votes 👍👎</h1>
+  <div id="capsules">Chargement...</div>
+  <script src="capsules-vote.js"></script>
 </body>
 </html>

@@ -1,37 +1,46 @@
-const db = firebase.firestore();
-const container = document.getElementById("capsules");
 
-db.collection("capsules")
-  .orderBy("timestamp", "desc")
-  .onSnapshot((querySnapshot) => {
-    container.innerHTML = "";
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      const count = data.readCount || 0;
-      const capsuleId = doc.id;
+document.addEventListener("DOMContentLoaded", async () => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+    authDomain: "raun-network.firebaseapp.com",
+    projectId: "raun-network"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-      const div = document.createElement("div");
-      div.className = "capsule";
-      div.innerHTML = `
-        <p>${data.texte}</p>
-        <p>👁️ <strong>Lectures</strong> : <span id="read-${capsuleId}">${count}</span></p>
-      `;
-      container.appendChild(div);
+  const container = document.getElementById("capsules");
+  const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
+  container.innerHTML = "";
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const id = doc.id;
+    const text = data.text || "Capsule vide";
+    const up = data.votesUp || 0;
+    const down = data.votesDown || 0;
 
-      // Protection localStorage
-      const storageKey = "read_" + capsuleId;
-      if (!localStorage.getItem(storageKey)) {
-        db.collection("capsules").doc(capsuleId).update({
-          readCount: firebase.firestore.FieldValue.increment(1)
-        }).then(() => {
-          localStorage.setItem(storageKey, "1");
-          const countSpan = document.getElementById("read-" + capsuleId);
-          if (countSpan) {
-            countSpan.textContent = count + 1;
-          }
-        }).catch((error) => {
-          console.error("Erreur mise à jour readCount :", error);
-        });
-      }
-    });
+    const div = document.createElement("div");
+    div.className = "capsule";
+    div.innerHTML = `
+      <p>${text}</p>
+      <p>
+        <button onclick="vote('${id}', 'votesUp')">👍 <span id="up-${id}">${up}</span></button>
+        <button onclick="vote('${id}', 'votesDown')">👎 <span id="down-${id}">${down}</span></button>
+      </p>
+    `;
+    container.appendChild(div);
   });
+});
+
+function vote(id, type) {
+  const key = "voted-" + id;
+  if (localStorage.getItem(key)) {
+    alert("Tu as déjà voté !");
+    return;
+  }
+  const ref = firebase.firestore().collection("capsules").doc(id);
+  ref.update({ [type]: firebase.firestore.FieldValue.increment(1) }).then(() => {
+    localStorage.setItem(key, "1");
+    const span = document.getElementById((type === "votesUp" ? "up-" : "down-") + id);
+    span.textContent = parseInt(span.textContent) + 1;
+  });
+}
