@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
   authDomain: "raun-network.firebaseapp.com",
