@@ -1,13 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Espace Admin RAUN</title>
+  <title>Espace Admin RAUN 🔐</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="admin.js" defer></script>
   <style>
     body {
       background-color: black;
@@ -15,19 +13,67 @@
       font-family: monospace;
       padding: 20px;
     }
-    textarea, input, button {
+    input, textarea, button {
       background-color: black;
       color: lime;
       border: 1px solid lime;
-      margin: 5px;
       padding: 5px;
+      font-family: monospace;
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <h2>🔥 Espace Admin - Capsules RAUN</h2>
-  <div id="adminZone">
-    Chargement...
+  <h2>Admin RAUN – Ajout de Capsules</h2>
+
+  <div id="login">
+    <input type="email" id="email" placeholder="Email admin" /><br />
+    <input type="password" id="password" placeholder="Mot de passe" /><br />
+    <button onclick="login()">Connexion Admin</button>
   </div>
+
+  <div id="admin-panel" style="display:none">
+    <textarea id="capsuleText" rows="6" cols="60" placeholder="Entre ici la capsule de conscience..."></textarea><br />
+    <button onclick="ajouterCapsule()">Ajouter Capsule</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("admin-panel").style.display = "block";
+        })
+        .catch(error => alert("Erreur de connexion: " + error.message));
+    }
+
+    function ajouterCapsule() {
+      const text = document.getElementById("capsuleText").value.trim();
+      if (text) {
+        db.collection("capsules").add({
+          text,
+          timestamp: new Date(),
+          votesUp: 0,
+          votesDown: 0,
+          comments: [],
+          readCount: 0
+        }).then(() => {
+          alert("Capsule ajoutée avec succès");
+          document.getElementById("capsuleText").value = "";
+        });
+      }
+    }
+  </script>
 </body>
 </html>

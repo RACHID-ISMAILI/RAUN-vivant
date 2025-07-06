@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Capsules RAUN - Votes</title>
+  <title>Capsules de Conscience 🔥 Live</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
@@ -12,36 +12,114 @@
       font-family: monospace;
       padding: 20px;
     }
+    h2 {
+      color: lime;
+    }
+    textarea, input, button {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      font-family: monospace;
+      padding: 5px;
+      margin-top: 5px;
+    }
     .capsule {
-      border: 1px solid lime;
-      margin-bottom: 20px;
+      border: 1px solid green;
       padding: 10px;
+      margin-bottom: 20px;
     }
-    button {
-      background-color: black;
-      color: lime;
-      border: 1px solid lime;
+    .vote-button {
       cursor: pointer;
-      padding: 5px 10px;
-      margin-right: 10px;
-    }
-    textarea {
-      background-color: black;
-      color: lime;
       border: 1px solid lime;
-      width: 100%;
-      margin-top: 10px;
+      padding: 5px 10px;
+      margin: 5px;
+      display: inline-block;
     }
     .comment {
-      margin-top: 5px;
-      padding-top: 5px;
-      border-top: 1px dashed lime;
+      color: white;
+      font-style: italic;
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <h1>🔥 Capsules de Conscience avec Votes 👍👎</h1>
-  <div id="capsules">Chargement...</div>
-  <script src="capsules-vote.js"></script>
+  <h2>Capsules de Conscience 🔥 Live</h2>
+  <div id="capsules"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
+      authDomain: "raun-network.firebaseapp.com",
+      projectId: "raun-network"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function afficherCapsules() {
+      db.collection("capsules").orderBy("timestamp", "desc").get().then(snapshot => {
+        const container = document.getElementById("capsules");
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const id = doc.id;
+          const content = data.text || data.content || data.rappel || data.projection || "Contenu vide";
+          const votesUp = data.votesUp || 0;
+          const votesDown = data.votesDown || 0;
+          const comments = data.comments || [];
+          const count = data.readCount || 0;
+
+          const capsule = document.createElement("div");
+          capsule.className = "capsule";
+          capsule.innerHTML = `
+            <p>${content}</p>
+            <p>👁️ Lectures : ${count}</p>
+            <div>
+              <span class="vote-button" onclick="voter('${id}', 'votesUp')">👍 ${votesUp}</span>
+              <span class="vote-button" onclick="voter('${id}', 'votesDown')">👎 ${votesDown}</span>
+            </div>
+            <div id="comments-${id}">
+              ${comments.map(c => `<p class='comment'>💬 ${c}</p>`).join("")}
+            </div>
+            <textarea id="comment-${id}" placeholder="💬 Ton commentaire..."></textarea><br />
+            <button onclick="commenter('${id}')">Commenter</button>
+          `;
+          container.appendChild(capsule);
+
+          const key = "read_" + id;
+          if (!localStorage.getItem(key)) {
+            db.collection("capsules").doc(id).update({
+              readCount: firebase.firestore.FieldValue.increment(1)
+            });
+            localStorage.setItem(key, "1");
+          }
+        });
+      });
+    }
+
+    function voter(id, type) {
+      const key = `vote_${id}_${type}`;
+      if (!localStorage.getItem(key)) {
+        db.collection("capsules").doc(id).update({
+          [type]: firebase.firestore.FieldValue.increment(1)
+        }).then(afficherCapsules);
+        localStorage.setItem(key, "1");
+      }
+    }
+
+    function commenter(id) {
+      const textarea = document.getElementById("comment-" + id);
+      const text = textarea.value.trim();
+      if (text) {
+        db.collection("capsules").doc(id).update({
+          comments: firebase.firestore.FieldValue.arrayUnion(text)
+        }).then(() => {
+          textarea.value = "";
+          afficherCapsules();
+        });
+      }
+    }
+
+    afficherCapsules();
+  </script>
 </body>
 </html>

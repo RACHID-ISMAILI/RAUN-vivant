@@ -1,48 +1,49 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>RAUN Vivant - Accueil</title>
+  <title>RAUN Vivant</title>
+  <link rel="icon" href="favicon.ico" />
   <style>
     body {
       background-color: black;
       color: lime;
       font-family: monospace;
-      margin: 0;
       text-align: center;
-      padding: 30px;
+      margin: 0;
+      padding: 20px;
     }
-    img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 3px solid lime;
-    }
-    h1 {
-      margin-top: 10px;
-      font-size: 2em;
-      color: #00ff00;
-    }
-    .links {
-      margin-top: 30px;
-    }
-    .links a {
+    a {
+      color: cyan;
+      text-decoration: underline;
       display: block;
       margin: 10px;
-      color: cyan;
-      font-size: 1.2em;
-      text-decoration: underline;
+      font-size: 1.3em;
+    }
+    img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid lime;
+      animation: glow 1.5s infinite alternate;
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 5px lime; }
+      to { box-shadow: 0 0 20px lime; }
+    }
+    .badge {
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <img src="profil.jpg" alt="Photo de profil">
-  <h1>RAUN Vivant</h1>
-  <div class="links">
-    <a href="capsules.html">🧠 Voir les Capsules</a>
-    <a href="admin.html">🔐 Espace Admin</a>
-    <a href="https://github.com/rachid-ismaili/RAUN-vivant" target="_blank">📁 Dépôt GitHub</a>
+  <div class="badge">
+    <img src="photo.jpg" alt="Photo de profil" /><br />
+    <span style="color: lime; font-size: 0.9em;">Photo de profil</span>
   </div>
+  <h1>RAUN Vivant</h1>
+  <a href="capsules.html">🧠 Voir les Capsules</a>
+  <a href="admin.html">🔐 Espace Admin</a>
+  <a href="https://github.com/RACHID-ISMAILI/RAUN-vivant" target="_blank">📁 Dépôt GitHub</a>
 </body>
 </html>
