@@ -1,85 +1,37 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-  authDomain: "raun-network.firebaseapp.com",
-  projectId: "raun-network"
-};
+const db = firebase.firestore();
+const container = document.getElementById("capsules");
 
-let db;
-
-try {
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
-  loadCapsulesFirestore();
-} catch (e) {
-  console.warn("Firebase failed, loading local capsules.json");
-  loadCapsulesLocal();
-}
-
-function loadCapsulesFirestore() {
-  db.collection("capsules").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-    const container = document.getElementById("capsules");
+db.collection("capsules")
+  .orderBy("timestamp", "desc")
+  .onSnapshot((querySnapshot) => {
     container.innerHTML = "";
-    snapshot.forEach(doc => renderCapsule(doc.id, doc.data(), true));
-  }, error => {
-    console.warn("Firestore unavailable, switching to local.");
-    loadCapsulesLocal();
-  });
-}
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const count = data.readCount || 0;
+      const capsuleId = doc.id;
 
-function loadCapsulesLocal() {
-  fetch("capsules.json").then(res => res.json()).then(data => {
-    const container = document.getElementById("capsules");
-    container.innerHTML = "";
-    data.forEach((capsule, index) => renderCapsule(index, capsule, false));
-  });
-}
+      const div = document.createElement("div");
+      div.className = "capsule";
+      div.innerHTML = `
+        <p>${data.texte}</p>
+        <p>👁️ <strong>Lectures</strong> : <span id="read-${capsuleId}">${count}</span></p>
+      `;
+      container.appendChild(div);
 
-function renderCapsule(id, data, online) {
-  const container = document.getElementById("capsules");
-  const div = document.createElement("div");
-  div.className = "capsule";
-
-  div.innerHTML = `
-    <h3>${data.title}</h3>
-    <p>${data.text}</p>
-    <p>👁 Lectures : ${data.readCount}</p>
-    <button onclick="vote('${id}', 'up', ${online})">👍 ${data.votesUp}</button>
-    <button onclick="vote('${id}', 'down', ${online})">👎 ${data.votesDown}</button>
-    <div><textarea id="comment-${id}" placeholder="Votre commentaire..."></textarea>
-    <button onclick="commenter('${id}', ${online})">Commenter</button></div>
-    ${data.comments && data.comments.length ? '<h4>Commentaires :</h4>' + data.comments.map(c => `<p>- ${c}</p>`).join("") : ''}
-  `;
-  container.appendChild(div);
-}
-
-function vote(id, type, online) {
-  if (online) {
-    const ref = db.collection("capsules").doc(id);
-    db.runTransaction(tx => {
-      return tx.get(ref).then(doc => {
-        const data = doc.data();
-        const count = (type === "up" ? (data.votesUp || 0) + 1 : (data.votesDown || 0) + 1);
-        const update = type === "up" ? { votesUp: count } : { votesDown: count };
-        tx.update(ref, update);
-      });
+      // Protection localStorage
+      const storageKey = "read_" + capsuleId;
+      if (!localStorage.getItem(storageKey)) {
+        db.collection("capsules").doc(capsuleId).update({
+          readCount: firebase.firestore.FieldValue.increment(1)
+        }).then(() => {
+          localStorage.setItem(storageKey, "1");
+          const countSpan = document.getElementById("read-" + capsuleId);
+          if (countSpan) {
+            countSpan.textContent = count + 1;
+          }
+        }).catch((error) => {
+          console.error("Erreur mise à jour readCount :", error);
+        });
+      }
     });
-  } else {
-    alert("Vote enregistré localement (mode hors ligne).");
-  }
-}
-
-function commenter(id, online) {
-  const val = document.getElementById(`comment-${id}`).value.trim();
-  if (!val) return;
-  if (online) {
-    const ref = db.collection("capsules").doc(id);
-    ref.update({
-      comments: firebase.firestore.FieldValue.arrayUnion(val)
-    }).then(() => {
-      alert("Commentaire ajouté.");
-      document.getElementById(`comment-${id}`).value = "";
-    });
-  } else {
-    alert("Commentaire sauvegardé localement (hors ligne).");
-  }
-}
+  });

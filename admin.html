@@ -1,7 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Espace Admin RAUN 🔐</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -13,67 +14,90 @@
       font-family: monospace;
       padding: 20px;
     }
-    input, textarea, button {
+    h2, h3 {
+      color: #00ff00;
+    }
+    textarea, input, button {
       background-color: black;
       color: lime;
+      font-family: monospace;
       border: 1px solid lime;
       padding: 5px;
-      font-family: monospace;
-      margin: 5px 0;
+    }
+    .comment-block {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px dashed lime;
     }
   </style>
 </head>
 <body>
-  <h2>Admin RAUN – Ajout de Capsules</h2>
+  <h2>Bienvenue dans l’espace RAUN secret 🔥</h2>
+  <button onclick="logout()">Se déconnecter</button>
 
-  <div id="login">
-    <input type="email" id="email" placeholder="Email admin" /><br />
-    <input type="password" id="password" placeholder="Mot de passe" /><br />
-    <button onclick="login()">Connexion Admin</button>
-  </div>
+  <h3>📝 Écrire une capsule</h3>
+  <textarea id="capsuleInput" placeholder="Écris ta capsule ici..." rows="5" cols="50"></textarea><br>
+  <button onclick="publishCapsule()">Publier</button>
 
-  <div id="admin-panel" style="display:none">
-    <textarea id="capsuleText" rows="6" cols="60" placeholder="Entre ici la capsule de conscience..."></textarea><br />
-    <button onclick="ajouterCapsule()">Ajouter Capsule</button>
-  </div>
+  <h3>💬 Commentaires récents</h3>
+  <div id="commentaires">Chargement...</div>
 
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
       authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network"
+      projectId: "raun-network",
+      storageBucket: "raun-network.appspot.com",
+      messagingSenderId: "541416001018",
+      appId: "1:541416001018:web:ba7efef5aea63a30206843"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          document.getElementById("login").style.display = "none";
-          document.getElementById("admin-panel").style.display = "block";
-        })
-        .catch(error => alert("Erreur de connexion: " + error.message));
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = "index.html";
+      });
     }
 
-    function ajouterCapsule() {
-      const text = document.getElementById("capsuleText").value.trim();
-      if (text) {
-        db.collection("capsules").add({
-          text,
-          timestamp: new Date(),
-          votesUp: 0,
-          votesDown: 0,
-          comments: [],
-          readCount: 0
-        }).then(() => {
-          alert("Capsule ajoutée avec succès");
-          document.getElementById("capsuleText").value = "";
-        });
-      }
+    async function publishCapsule() {
+      const text = document.getElementById("capsuleInput").value;
+      if (text.trim() === "") return;
+      await db.collection("capsules").add({
+        text,
+        views: 0,
+        timestamp: new Date()
+      });
+      document.getElementById("capsuleInput").value = "";
+      alert("Capsule publiée !");
     }
+
+    async function loadCommentaires() {
+      const container = document.getElementById("commentaires");
+      const snapshot = await db.collection("commentaires").orderBy("timestamp", "desc").limit(20).get();
+      container.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "comment-block";
+        div.innerHTML = `
+          <strong>${data.author || "Anonyme"}</strong> : ${data.message}<br>
+          🕒 ${new Date(data.timestamp.toDate()).toLocaleString()}<br>
+          Capsule ID: ${data.capsuleId}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    loadCommentaires();
   </script>
 </body>
 </html>
