@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Local Capsules RAUN - Votes 👍👎</title>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      padding: 20px;
+    }
+    .capsule {
+      border: 1px solid lime;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+    button {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      cursor: pointer;
+      padding: 5px 10px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔥 Capsules Locales de Conscience avec Votes 👍👎</h1>
+
+  <div class="capsule" id="capsule-1">
+    <p>🌿 La conscience est la lumière silencieuse derrière chaque pensée.</p>
+    <p>
+      <button onclick="vote('capsule-1', 'up')">👍 <span id="up-capsule-1">0</span></button>
+      <button onclick="vote('capsule-1', 'down')">👎 <span id="down-capsule-1">0</span></button>
+    </p>
+  </div>
+
+  <div class="capsule" id="capsule-2">
+    <p>🔥 Rien ne peut éteindre ce que je suis.</p>
+    <p>
+      <button onclick="vote('capsule-2', 'up')">👍 <span id="up-capsule-2">0</span></button>
+      <button onclick="vote('capsule-2', 'down')">👎 <span id="down-capsule-2">0</span></button>
+    </p>
+  </div>
+
+  <script>
+    function updateDisplay(id) {
+      const up = localStorage.getItem(id + "-up") || "0";
+      const down = localStorage.getItem(id + "-down") || "0";
+      document.getElementById("up-" + id).textContent = up;
+      document.getElementById("down-" + id).textContent = down;
+    }
+
+    function vote(id, type) {
+      const key = id + "-" + type;
+      let count = parseInt(localStorage.getItem(key) || "0");
+      count += 1;
+      localStorage.setItem(key, count);
+      updateDisplay(id);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      updateDisplay("capsule-1");
+      updateDisplay("capsule-2");
+    });
+  </script>
+</body>
+</html>

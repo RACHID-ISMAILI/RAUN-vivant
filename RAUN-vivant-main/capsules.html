@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Capsules de Conscience</title>
+  <meta charset="UTF-8" />
+  <title>Capsules RAUN - Votes</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
@@ -13,106 +12,36 @@
       font-family: monospace;
       padding: 20px;
     }
-    h2 {
-      color: deeppink;
-      border-bottom: 1px solid lime;
-      padding-bottom: 10px;
-    }
     .capsule {
       border: 1px solid lime;
-      padding: 10px;
       margin-bottom: 20px;
+      padding: 10px;
     }
-    .comment-box {
-      margin-top: 10px;
-      border-top: 1px dashed lime;
-      padding-top: 10px;
-    }
-    input, textarea, button {
-      font-family: monospace;
-      padding: 5px;
-      margin-top: 5px;
+    button {
       background-color: black;
       color: lime;
       border: 1px solid lime;
+      cursor: pointer;
+      padding: 5px 10px;
+      margin-right: 10px;
+    }
+    textarea {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      width: 100%;
+      margin-top: 10px;
     }
     .comment {
       margin-top: 5px;
-      padding-left: 10px;
+      padding-top: 5px;
+      border-top: 1px dashed lime;
     }
   </style>
 </head>
 <body>
-  <h2>🧠 Capsules de Conscience</h2>
-  <div id="capsules-container">Chargement...</div>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyD0R0IFgjCk3gWgVxK3-WnfLubhAqsKbOM",
-      authDomain: "raun-network.firebaseapp.com",
-      projectId: "raun-network",
-      storageBucket: "raun-network.appspot.com",
-      messagingSenderId: "541416001018",
-      appId: "1:541416001018:web:ba7efef5aea63a30206843"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    async function loadCapsules() {
-      const container = document.getElementById("capsules-container");
-      container.innerHTML = "";
-
-      const snapshot = await db.collection("capsules").orderBy("timestamp", "desc").get();
-      snapshot.forEach(async (doc) => {
-        const capsule = doc.data();
-        const capsuleDiv = document.createElement("div");
-        capsuleDiv.className = "capsule";
-        capsuleDiv.innerHTML = `
-          <p>...</p>
-          <p>${capsule.text}</p>
-          <p>👁 Lectures : ${capsule.views || 0}</p>
-          <div class="comment-box" id="comments-${doc.id}">
-            <strong>💬 Commentaires :</strong>
-            <div id="comment-list-${doc.id}">Chargement...</div>
-            <input type="text" id="author-${doc.id}" placeholder="Ton prénom (facultatif)" />
-            <textarea id="message-${doc.id}" placeholder="Ton message..."></textarea>
-            <button onclick="submitComment('${doc.id}')">Envoyer</button>
-          </div>
-        `;
-        container.appendChild(capsuleDiv);
-        loadComments(doc.id);
-      });
-    }
-
-    async function loadComments(capsuleId) {
-      const list = document.getElementById(`comment-list-${capsuleId}`);
-      const snapshot = await db.collection("commentaires").where("capsuleId", "==", capsuleId).orderBy("timestamp").get();
-      list.innerHTML = "";
-      snapshot.forEach((doc) => {
-        const c = doc.data();
-        const p = document.createElement("p");
-        p.className = "comment";
-        p.innerHTML = `<strong>${c.author || "Anonyme"}:</strong> ${c.message}`;
-        list.appendChild(p);
-      });
-    }
-
-    async function submitComment(capsuleId) {
-      const author = document.getElementById(`author-${capsuleId}`).value;
-      const message = document.getElementById(`message-${capsuleId}`).value;
-      if (message.trim() === "") return;
-      await db.collection("commentaires").add({
-        capsuleId,
-        author,
-        message,
-        timestamp: new Date()
-      });
-      document.getElementById(`message-${capsuleId}`).value = "";
-      loadComments(capsuleId);
-    }
-
-    loadCapsules();
-  </script>
+  <h1>🔥 Capsules de Conscience avec Votes 👍👎</h1>
+  <div id="capsules">Chargement...</div>
+  <script src="capsules-vote.js"></script>
 </body>
 </html>
