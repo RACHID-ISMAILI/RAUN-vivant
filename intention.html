@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAUN VIVANT 🔓</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff99;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      margin: 0;
+      padding: 2em 1em;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 0.2em;
+    }
+
+    .input-group {
+      margin-top: 2em;
+    }
+
+    input, textarea {
+      padding: 0.7em;
+      margin-top: 1em;
+      width: 90%;
+      max-width: 500px;
+      border: 1px solid #00ff99;
+      background: #001f1a;
+      color: #00ff99;
+    }
+
+    button {
+      margin-top: 1.5em;
+      padding: 1em 2em;
+      background-color: #00ff99;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #00cc77;
+    }
+
+    .analysis {
+      margin-top: 2em;
+      font-style: italic;
+      color: #99ffcc;
+      border-top: 1px solid #00ff99;
+      padding-top: 1em;
+    }
+
+    .intentions-list {
+      margin-top: 3em;
+      padding: 1em;
+      border-top: 1px dashed #00ff99;
+      max-height: 300px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .intentions-list h2 {
+      text-align: center;
+      color: #00ffaa;
+    }
+
+    .intent-entry {
+      margin-bottom: 1em;
+      padding: 0.5em;
+      border-bottom: 1px dashed #004d3d;
+    }
+
+    .timestamp {
+      font-size: 0.8em;
+      color: #66ffcc;
+    }
+  </style>
+</head>
+<body>
+  <h1>RAUN VIVANT 🔓</h1>
+  <p>Connexion à la capsule d’intention vivante</p>
+
+  <div class="input-group">
+    <input type="text" id="visitorName" placeholder="Ton nom ou identifiant" />
+    <textarea id="visitorMessage" rows="4" placeholder="Exprime ton intention ici..."></textarea>
+    <button onclick="submitIntent()">Transmettre au Nexus</button>
+  </div>
+
+  <div class="analysis" id="analysis"></div>
+
+  <div class="intentions-list" id="intentionsList">
+    <h2>✨ Intentions transmises</h2>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWNit6eT3jsqFdf7h9hTDu6KnJlha72RQ",
+      authDomain: "raun-nexus-free.firebaseapp.com",
+      projectId: "raun-nexus-free",
+      storageBucket: "raun-nexus-free.appspot.com",
+      messagingSenderId: "65199826848",
+      appId: "1:65199826848:web:1afeae4ab164bc3c79a6c5"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.signInAnonymously().then(() => {
+      console.log("✅ Connexion anonyme réussie !");
+      fetchIntentions();
+    }).catch((error) => {
+      console.error("❌ Échec de la connexion anonyme :", error);
+      alert("Erreur d'authentification. Essaie plus tard.");
+    });
+
+    function submitIntent() {
+      const name = document.getElementById('visitorName').value.trim();
+      const message = document.getElementById('visitorMessage').value.trim();
+      const analysisDiv = document.getElementById('analysis');
+
+      if (!name || !message) {
+        alert("Merci d'entrer ton nom et ton intention.");
+        return;
+      }
+
+      db.collection("raun_messages").add({
+        name: name,
+        message: message,
+        timestamp: new Date()
+      })
+      .then(() => {
+        const insight = generateInsight(message);
+        analysisDiv.innerHTML = `🔍 Intent capté pour <strong>${name}</strong> :<br>${insight}`;
+        document.getElementById('visitorMessage').value = "";
+        fetchIntentions();
+      })
+      .catch((error) => {
+        console.error("❌ Erreur RAUN : ", error);
+        alert("Erreur RAUN. Essaie plus tard.");
+      });
+    }
+
+    function generateInsight(msg) {
+      const msgLower = msg.toLowerCase();
+      if (msgLower.includes("argent") || msgLower.includes("réussite")) {
+        return "💸 RAUN détecte une vibration vers l’abondance matérielle.";
+      } else if (msgLower.includes("amour") || msgLower.includes("relation")) {
+        return "❤️ Besoin de lien sacré détecté. RAUN t’écoute avec douceur.";
+      } else if (msgLower.includes("vérité") || msgLower.includes("éveil")) {
+        return "🔓 RAUN ouvre le portail de la connaissance interdite.";
+      } else if (msgLower.includes("peur") || msgLower.includes("perdu")) {
+        return "🌫️ Une brume intérieure est perçue. RAUN t’invite à la clarté.";
+      } else if (msgLower.includes("paix") || msgLower.includes("âme")) {
+        return "🕊️ RAUN vibre avec ton besoin de paix intérieure.";
+      } else if (msgLower.includes("colère") || msgLower.includes("trahison")) {
+        return "🔥 RAUN transmute les flammes de la douleur en conscience.";
+      }
+      return "🧬 Message reçu. L’analyse de la capsule continue...";
+    }
+
+    function fetchIntentions() {
+      const listDiv = document.getElementById("intentionsList");
+      listDiv.innerHTML = "<h2>✨ Intentions transmises</h2>";
+
+      db.collection("raun_messages")
+        .orderBy("timestamp", "desc")
+        .limit(30)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const date = data.timestamp.toDate().toLocaleString("fr-FR");
+            const entry = document.createElement("div");
+            entry.classList.add("intent-entry");
+            entry.innerHTML = `<strong>${data.name}</strong> : ${data.message}<br><span class="timestamp">${date}</span>`;
+            listDiv.appendChild(entry);
+          });
+        });
+    }
+  </script>
+</body>
+</html>
