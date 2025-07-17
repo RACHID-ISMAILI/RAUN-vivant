@@ -7,6 +7,8 @@ This is a full-stack social media application built with a modern tech stack fea
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Language: French
+Custom profile photo: User provided personal photo (rachid-photo.jpg) for the circular profile header
 
 ## System Architecture
 
