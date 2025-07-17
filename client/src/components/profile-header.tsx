@@ -7,7 +7,7 @@ export default function ProfileHeader() {
           <img 
             src="@assets/photo_1752768144582.jpg" 
             alt="RACHID" 
-            className="w-full h-full object-cover" 
+            className="w-full h-full object-cover object-center" 
           />
         </div>
       </div>
