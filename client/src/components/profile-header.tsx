@@ -5,7 +5,7 @@ export default function ProfileHeader() {
       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-matrix-green to-neon-green p-1 animate-pulse-glow">
         <div className="w-full h-full bg-matrix-bg rounded-full overflow-hidden">
           <img 
-            src="@assets/photo_1752768144582.jpg" 
+            src="/rachid-photo.jpg" 
             alt="RACHID" 
             className="w-full h-full object-cover object-center" 
           />
