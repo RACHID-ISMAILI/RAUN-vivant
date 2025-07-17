@@ -8,7 +8,20 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
-    <Switch>
+    
+<div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 9999 }}>
+  <a href="/admin-capsules.html" style={{
+    backgroundColor: '#00ff99',
+    color: 'black',
+    padding: '10px 20px',
+    borderRadius: '10px',
+    fontWeight: 'bold',
+    textDecoration: 'none'
+  }}>
+    Admin
+  </a>
+</div>
+<Switch>
       <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
