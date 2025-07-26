@@ -1,0 +1,14 @@
+{
+  "name": "raun-vivant",
+  "version": "1.0.0",
+  "description": "RAUN-VIVANT - Projet Node.js pour Render avec Firebase, Express, Capsules et Intentions",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "firebase": "^9.22.2"
+  }
+}

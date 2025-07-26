@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAUN-RACHID - Plateforme d'Éveil Spirituel</title>
+    <meta name="description" content="Découvrez la sagesse spirituelle à travers des capsules d'éveil, partagez vos intentions sacrées et participez à une communauté spirituelle bienveillante.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Matrix Background -->
+    <div id="matrix-bg" class="matrix-background"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="rotating-text">
+                <div class="text-circle">
+                    <span>ÉVEIL • CONSCIENCE • SPIRITUALITÉ • SAGESSE • </span>
+                </div>
+            </div>
+            <div class="profile-center">
+                <img src="attached_assets/photo_1753291596562.jpg" alt="RACHID" class="profile-image">
+                <h1 class="profile-name">RAUN-RACHID</h1>
+                <p class="profile-subtitle">Guide Spirituel & Enseignant</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button class="nav-btn active" data-category="spiritualite">
+                ✨ Spiritualité
+            </button>
+            <button class="nav-btn" data-category="sciences">
+                🧬 Sciences
+            </button>
+            <button class="nav-btn" data-category="humanite">
+                🌍 Humanité
+            </button>
+            <button class="nav-btn" data-category="intentions">
+                🙏 Intentions
+            </button>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Capsules Container -->
+            <div id="capsules-container" class="capsules-container">
+                <!-- Capsules will be loaded here -->
+            </div>
+
+            <!-- Intentions Container -->
+            <div id="intentions-container" class="intentions-container hidden">
+                <h2>Intentions Sacrées Partagées</h2>
+                <div class="intentions-list">
+                    <!-- Intentions will be loaded here -->
+                </div>
+                <button id="add-intention-btn" class="add-intention-btn">
+                    + Partager une Intention
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Capsule Detail Modal -->
+    <div id="capsule-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title"></h2>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="capsule-meta">
+                    <span id="modal-category" class="category-badge"></span>
+                    <span id="modal-stats" class="stats"></span>
+                </div>
+                <div id="modal-content" class="capsule-content"></div>
+                
+                <div class="capsule-actions">
+                    <button id="like-btn" class="action-btn like-btn">
+                        <span class="heart">♡</span>
+                        <span id="like-count">0</span>
+                    </button>
+                    <button id="comment-btn" class="action-btn comment-btn">
+                        💬 <span id="comment-count">0</span>
+                    </button>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    <h3>Commentaires</h3>
+                    <div id="comments-list" class="comments-list">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                    <div class="add-comment">
+                        <input type="text" id="author-input" placeholder="Votre nom (optionnel)" maxlength="50">
+                        <textarea id="comment-input" placeholder="Partagez votre réflexion..." rows="3" maxlength="500"></textarea>
+                        <button id="submit-comment" class="submit-btn">Publier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intention Modal -->
+    <div id="intention-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Partager une Intention Sacrée</h2>
+                <button id="close-intention-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Les intentions sont des graines de manifestation. Partagez la vôtre avec bienveillance.</p>
+                <textarea id="intention-input" placeholder="Écrivez votre intention sacrée..." rows="4" maxlength="300"></textarea>
+                <button id="submit-intention" class="submit-btn">Transmettre l'Intention</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Link (Hidden) -->
+    <a href="admin.html" class="admin-link">⚙️</a>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

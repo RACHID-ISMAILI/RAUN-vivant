@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration RAUN-RACHID</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Matrix Background -->
+    <div id="matrix-bg" class="matrix-background"></div>
+
+    <!-- Login Form (Always shown first) -->
+    <div id="login-container" class="login-container">
+        <div class="login-form">
+            <div class="logo">
+                <h1>🔐 Accès Sécurisé</h1>
+                <h2>Administration RAUN-RACHID</h2>
+                <p class="security-notice">Accès réservé aux administrateurs autorisés</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur:</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe:</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="login-btn">
+                    <span class="login-text">Se connecter</span>
+                    <span class="login-spinner hidden">●●●</span>
+                </button>
+                <div id="login-error" class="error-message hidden"></div>
+            </form>
+            <div class="security-footer">
+                <small>Connexion sécurisée SSL • Tentatives limitées</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (Completely hidden, created dynamically after auth) -->
+    <div id="admin-dashboard" class="admin-dashboard hidden">
+        <!-- Content will be dynamically created after successful authentication -->
+    </div>
+
+    <!-- New/Edit Capsule Modal -->
+    <div id="capsule-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Nouvelle Capsule</h2>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="capsule-form">
+                    <div class="form-group">
+                        <label for="capsule-title">Titre:</label>
+                        <input type="text" id="capsule-title" name="title" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="capsule-category">Catégorie:</label>
+                        <select id="capsule-category" name="category" required>
+                            <option value="spiritualite">✨ Spiritualité</option>
+                            <option value="sciences">🧬 Sciences</option>
+                            <option value="humanite">🌍 Humanité</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="capsule-content">Contenu:</label>
+                        <textarea id="capsule-content" name="content" required rows="10" maxlength="2000"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancel-capsule" class="cancel-btn">Annuler</button>
+                        <button type="submit" id="save-capsule" class="save-btn">Sauvegarder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
